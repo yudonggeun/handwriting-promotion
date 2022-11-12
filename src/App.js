@@ -1,10 +1,10 @@
 import './App.css';
+import RootLayout from './layout/root';
 
 function App() {
   return (
-    <div className="App h-screen w-screen">
-      <div className="bg-blue-500 h-1/4"></div>
-      
+    <div>
+      <RootLayout></RootLayout>
     </div>
   );
 }

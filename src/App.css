@@ -4097,6 +4097,11 @@ textarea.form-control.is-invalid {
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
 }
 
+.bg-blue-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+}
+
 .outline {
   outline-style: solid;
 }
