@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AmendContext from "../context/amend_status_context";
 
 const infroInfo = {
     image: `${process.env.PUBLIC_URL}/images/calligraphy-g9ada6110c_1920.png`,
@@ -25,56 +26,13 @@ const contentInfos = [
             "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg"
         ]
     },
-    {
-        title: "캘리그라피를 배워보세요~~!!",
-        description: "캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요",
-        images: [
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg"
-        ]
-    },
-    {
-        title: "캘리그라피를 배워보세요~~!!",
-        description: "캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요",
-        images: [
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg"
-        ]
-    },
-    {
-        title: "캘리그라피를 배워보세요~~!!",
-        description: "캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요",
-        images: [
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg"
-        ]
-    }
 ];
+
 
 function ContentWrapper(props) {
 
     const [infos, setInfo] = useState(contentInfos);
+    const [isAmend, setAmend] = useState(false);
 
     useEffect(() => {
         // Get the button
@@ -116,34 +74,38 @@ function ContentWrapper(props) {
     }, [])
 
     return (
-        <div className="relative w-full h-full">
-            <div className="flex flex-col w-full h-full">
-                <Intro />
-                <div id="contentArea" className="lg:snap-y lg:snap-mandatory overflow-auto scrollbar-hide flex-1 w-full p-2 md:p-5">
-                    <h2 className="text-2xl bg-white rounded-lg mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
-                    {
-                        infos.map((obj, index) => {
-                            return (
-                                <Content info={obj} key={index} />
-                            )
-                        })
-                    }
-                    <div className="text-right p-2 md:p-5 md:text-xl text-gray-600">
-                        문의 전화 010-9189-3254
+        <AmendContext.Provider value={isAmend}>
+            <div className="relative w-full h-full">
+                <div className="flex flex-col w-full h-full">
+                    <Intro />
+                    <div id="contentArea" className="lg:snap-y lg:snap-mandatory overflow-auto scrollbar-hide flex-1 w-full p-2 md:p-5">
+                        <h2 className="text-2xl bg-white rounded-lg mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
+                        {
+                            infos.map((obj, index) => {
+                                return (
+                                    <Content info={obj} key={index} />
+                                )
+                            })
+                        }
+                        <div className="text-right p-2 md:p-5 md:text-xl text-gray-600">
+                            문의 전화 010-9189-3254
+                        </div>
                     </div>
                 </div>
+                <div className="absolute right-0 bottom-0 flex flex-col w-fit m-2">
+                    <button id="topButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
+                    <button id="upButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50">up</button>
+                </div>
             </div>
-            <div className="absolute right-0 bottom-0 flex flex-col w-fit m-2">
-                <button id="topButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
-                <button id="upButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50">up</button>
-            </div>
-        </div>
+        </AmendContext.Provider>
     )
 }
 
 function Intro(props) {
 
     const info = infroInfo;
+
+    const isAmend = useContext(AmendContext);
 
     return (
         <div className="h-1/2 md:h-1/4 md:flex">
@@ -154,7 +116,7 @@ function Intro(props) {
                 {
                     info.comments.map((comment, index) => {
                         return (
-                            <textarea className="mb-1 w-full bg-transparent outline-none resize-none" readOnly key={index} defaultValue={comment}>                                
+                            <textarea className="mb-1 w-full bg-transparent outline-none resize-none" readOnly={!isAmend} key={index} defaultValue={comment}>
                             </textarea>
                         )
                     })
@@ -167,11 +129,12 @@ function Intro(props) {
 function Content(props) {
 
     const info = props.info;
+    const isAmend = useContext(AmendContext);
 
     return (
         <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
-            <input type="text" readOnly className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
-            <textarea className="p-1 md:p-5 text-lg w-full outline-none" readOnly defaultValue={info.description}></textarea>
+            <input type="text" readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
+            <textarea className="p-1 md:p-5 text-lg w-full outline-none resize-none" readOnly={!isAmend} defaultValue={info.description}></textarea>
             <div className="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-1">
                 {
                     info.images.map((src, index) => {
@@ -184,6 +147,7 @@ function Content(props) {
                 }
             </div>
             <div className="flex justify-end">
+                {isAmend ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1">수정하기</button> : ""}
                 <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1">더보기</button>
             </div>
         </div>
