@@ -33,8 +33,24 @@ function ContentWrapper(props) {
 
     const [infos, setInfo] = useState(contentInfos);
     const [isAmend, setAmend] = useState(false);
+    const url = `${window.location.origin}/admin/isAmend`;
+
+    const requestAmend = () => {
+        fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                if (data.status === true) {
+                    setAmend(data.amendAuthority);
+                }
+            }).catch((e) => {
+                console.log(e);
+                setAmend(false);
+            });
+    }
 
     useEffect(() => {
+        requestAmend();
         // Get the button
         const topButton = document.getElementById("topButton");
         const upButton = document.getElementById("upButton");
@@ -83,7 +99,7 @@ function ContentWrapper(props) {
                         {
                             infos.map((obj, index) => {
                                 return (
-                                    <Content info={obj} key={index} />
+                                    <Content info={obj} key={index} id={`content${index}`} />
                                 )
                             })
                         }
@@ -147,8 +163,33 @@ function Content(props) {
                 }
             </div>
             <div className="flex justify-end">
-                {isAmend ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1">수정하기</button> : ""}
+                {isAmend ?
+                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button> : ""}
                 <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1">더보기</button>
+            </div>
+
+            <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+                id={`${props.id}Modal`} aria-hidden="true">
+                <div className="modal-dialog relative w-auto pointer-events-none">
+                    <div
+                        className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+                        <div
+                            className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+                            <h5 className="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">알림</h5>
+                            <button type="button"
+                                className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body relative p-4">
+                            수정하시겠습니까?
+                        </div>
+                        <div
+                            className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                            <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-dismiss="modal">닫기</button>
+                            <button className="bg-green-500 hover:bg-green-600 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" >수정</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
