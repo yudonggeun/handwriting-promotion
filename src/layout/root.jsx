@@ -4,7 +4,7 @@ import ContentWrapper from "../component/content";
 function RootLayout(props){
 
     return (
-        <div className="w-screen h-screen bg-gradient-to-b from-green-300 to-green-50">
+        <div className="w-screen h-screen bg-gradient-to-b from-green-100 to-white">
             <ContentWrapper/>
         </div>
     )

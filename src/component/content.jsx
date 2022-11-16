@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const infroInfo = {
     image: `${process.env.PUBLIC_URL}/images/calligraphy-g9ada6110c_1920.png`,
@@ -54,6 +54,21 @@ const contentInfos = [
             "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
             "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg"
         ]
+    },
+    {
+        title: "캘리그라피를 배워보세요~~!!",
+        description: "캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요",
+        images: [
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
+
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
+            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg"
+        ]
     }
 ];
 
@@ -61,13 +76,50 @@ function ContentWrapper(props) {
 
     const [infos, setInfo] = useState(contentInfos);
 
-    console.log(infos);
+    useEffect(() => {
+        // Get the button
+        const topButton = document.getElementById("topButton");
+        const upButton = document.getElementById("upButton");
+        const target = document.getElementById("contentArea");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        target.onscroll = function () {
+            scrollFunction();
+        }
+
+        function scrollFunction() {
+            if (
+                target.scrollTop > 20 ||
+                target.scrollTop > 20
+            ) {
+                topButton.style.display = "block";
+                upButton.style.display = "block";
+            } else {
+                topButton.style.display = "none";
+                upButton.style.display = "none";
+            }
+        }
+        // When the user clicks on the button, scroll to the top of the document
+        topButton.addEventListener("click", backToTop);
+        upButton.addEventListener("click", backToUp);
+
+        function backToTop() {
+            target.scrollTop = 0;
+        }
+
+        //한번 클릭시 컴포넌트 하나씩 올라가도록
+        function backToUp() {
+            const count = infos.length;
+            const top = target.scrollTop - ((target.scrollHeight - target.clientHeight) / count);
+            target.scrollTop = top;
+        }
+    }, [])
 
     return (
         <div className="relative w-full h-full">
             <div className="flex flex-col w-full h-full">
                 <Intro />
-                <div className="overflow-auto flex-1 w-full p-2 md:p-5">
+                <div id="contentArea" className="lg:snap-y lg:snap-mandatory overflow-auto scrollbar-hide flex-1 w-full p-2 md:p-5">
                     <h2 className="text-2xl bg-white rounded-lg mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
                     {
                         infos.map((obj, index) => {
@@ -82,8 +134,8 @@ function ContentWrapper(props) {
                 </div>
             </div>
             <div className="absolute right-0 bottom-0 flex flex-col w-fit m-2">
-                <button className="p-1 rounded-lg bg-blue-200 hover:bg-blue-300 opacity-50 mb-2">top</button>
-                <button className="p-1 rounded-lg bg-blue-200 hover:bg-blue-300 opacity-50">up</button>
+                <button id="topButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
+                <button id="upButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50">up</button>
             </div>
         </div>
     )
@@ -94,17 +146,16 @@ function Intro(props) {
     const info = infroInfo;
 
     return (
-        <div className="h-1/4 flex md:flex-row">
-            <div className="p-5 h-full md:flex-1">
+        <div className="h-1/2 md:h-1/4 md:flex">
+            <div className="p-5 h-4/6 md:h-full md:flex-1 flex justify-center">
                 <img src={info.image} alt="" className="h-full"></img>
             </div>
-            <div className="hidden md:h-full md:w-2/5 p-5">
+            <div className=" md:h-full md:w-2/5 p-5">
                 {
                     info.comments.map((comment, index) => {
                         return (
-                            <p className="mb-1">
-                                {comment}
-                            </p>
+                            <textarea className="mb-1 w-full bg-transparent outline-none resize-none" readOnly key={index} defaultValue={comment}>                                
+                            </textarea>
                         )
                     })
                 }
@@ -117,17 +168,17 @@ function Content(props) {
 
     const info = props.info;
 
-    console.log(info);
     return (
-        <div className="bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
-            <h3 className="text-center text-2xl border-b p-5">{info.title}</h3>
-            <p className="p-1 md:p-5 text-lg">{info.description}
-            </p>
-            <div className="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-1 gap-1">
+        <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
+            <input type="text" readOnly className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
+            <textarea className="p-1 md:p-5 text-lg w-full outline-none" readOnly defaultValue={info.description}></textarea>
+            <div className="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-1">
                 {
                     info.images.map((src, index) => {
                         return (
-                            <img className={`rounded-lg border ${index > 3 ? "sm:hidden md:inline" : ""}`} src={src} key={index} alt=""></img>
+                            <div className="hover:p-0 box-content p-2 md:hover:col-span-2 hover:row-span-2" key={index}>
+                                <img className={`rounded-lg border ${index > 3 ? "sm:hidden md:inline" : ""}`} src={src} alt=""></img>
+                            </div>
                         )
                     })
                 }
