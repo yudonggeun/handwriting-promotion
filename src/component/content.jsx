@@ -12,8 +12,9 @@ const infroInfo = {
 
 const contentInfos = [
     {
-        title: "캘리그라피를 배워보세요~~!!",
-        description: "캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요        캘리그라피 어쩌구 설명을 적어요",
+        id: "000",//폴더 이름
+        title: "temper title",
+        description: "설명입니다.",
         images: [
             "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
             "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
@@ -31,15 +32,28 @@ const contentInfos = [
 
 function ContentWrapper(props) {
 
-    const [infos, setInfo] = useState(contentInfos);
+    const [infos, setInfo] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [isAmend, setAmend] = useState(false);
-    const url = `${window.location.origin}/admin/isAmend`;
+    const amendURL = `${window.location.origin}/admin/isAmend`;
+    const contentInfosURL = `${window.location.origin}/data/content`;
 
-    const requestAmend = () => {
-        fetch(url)
+    const requestContentInfos = () => {
+        fetch(contentInfosURL)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                setInfo(data);
+                setLoading(false);
+            }).catch((e) => {
+                console.log(e);
+                alert("오류 발생");
+            });
+    }
+
+    const requestAmend = () => {
+        fetch(amendURL)
+            .then((response) => response.json())
+            .then((data) => {
                 if (data.status === true) {
                     setAmend(data.amendAuthority);
                 }
@@ -50,6 +64,7 @@ function ContentWrapper(props) {
     }
 
     useEffect(() => {
+        requestContentInfos();
         requestAmend();
         // Get the button
         const topButton = document.getElementById("topButton");
@@ -89,15 +104,18 @@ function ContentWrapper(props) {
         }
     }, [])
 
+    const loadingMsg = loading ? "로딩 중입니다." : "";
+
     return (
         <AmendContext.Provider value={isAmend}>
             <div className="relative w-full h-full">
                 <div className="flex flex-col w-full h-full">
                     <Intro />
                     <div id="contentArea" className="lg:snap-y lg:snap-mandatory overflow-auto scrollbar-hide flex-1 w-full p-2 md:p-5">
-                        <h2 className="text-2xl bg-white rounded-lg mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
+                        <h2 className="text-2xl bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
+                        {loadingMsg}
                         {
-                            infos.map((obj, index) => {
+                            infos?.map((obj, index) => {
                                 return (
                                     <Content info={obj} key={index} id={`content${index}`} />
                                 )
@@ -144,13 +162,54 @@ function Intro(props) {
 
 function Content(props) {
 
-    const info = props.info;
+    const [info, setInfo] = useState(props.info);
     const isAmend = useContext(AmendContext);
+
+    console.log(info);
+
+    const id = info.id;
+    const images = info.images;
+    let title = info.title;
+    let description = info.description;
+
+    const url = `${window.location.origin}/data/content`;
+
+    const requestAmendContent = () => {
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: id,
+                title: title,
+                description: description,
+                images: images
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    function changeTitle(event) {
+        const obj = event.target;
+        title = obj.value;
+    }
+
+    function changeDescription(event) {
+        const obj = event.target;
+        description = obj.value;
+    }
 
     return (
         <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
-            <input type="text" readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
-            <textarea className="p-1 md:p-5 text-lg w-full outline-none resize-none" readOnly={!isAmend} defaultValue={info.description}></textarea>
+            <input type="text" onChange={(event) => changeTitle(event)} readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
+            <textarea className="p-1 md:p-5 text-lg w-full outline-none resize-none" onChange={(event) => changeDescription(event)} readOnly={!isAmend} defaultValue={info.description}></textarea>
             <div className="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-1">
                 {
                     info.images.map((src, index) => {
@@ -163,8 +222,7 @@ function Content(props) {
                 }
             </div>
             <div className="flex justify-end">
-                {isAmend ?
-                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button> : ""}
+                {isAmend ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button> : ""}
                 <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1">더보기</button>
             </div>
 
@@ -186,7 +244,7 @@ function Content(props) {
                         <div
                             className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                             <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-dismiss="modal">닫기</button>
-                            <button className="bg-green-500 hover:bg-green-600 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" >수정</button>
+                            <button className="bg-green-500 hover:bg-green-600 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" onClick={() => requestAmendContent()}>수정</button>
                         </div>
                     </div>
                 </div>
