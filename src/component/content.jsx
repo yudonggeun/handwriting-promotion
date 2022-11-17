@@ -1,49 +1,50 @@
 import React, { useContext, useEffect, useState } from "react";
 import AmendContext from "../context/amend_status_context";
 
-const infroInfo = {
-    image: `${process.env.PUBLIC_URL}/images/calligraphy-g9ada6110c_1920.png`,
-    comments: [
-        "요즘 학생들의 글씨체는 본인도 알아 볼 수 없을 만큼 바르지 못합니다. 마우스와 키보드에 익숙하기 때문입니다.",
-        "글씨체를 바로 잡음으로서 산만함을 약화시키고 집중력을 가지게 해 줄 수 있습니다."
-    ]
-}
-
-
-const contentInfos = [
-    {
-        id: "000",//폴더 이름
-        title: "temper title",
-        description: "설명입니다.",
-        images: [
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg",
-            "https://daonfont.com/upload_files/board/board_32//202109/16312427891.jpg"
-        ]
-    },
-];
-
-
 function ContentWrapper(props) {
 
-    const [infos, setInfo] = useState(null);
+    const [contentInfos, setContentInfos] = useState(null);
+    const [introInfo, setIntroInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAmend, setAmend] = useState(false);
     const amendURL = `${window.location.origin}/admin/isAmend`;
     const contentInfosURL = `${window.location.origin}/data/content`;
+    const introInfosURL = `${window.location.origin}/data/intro`;
+
+    const check = [false, false];//[intro, content]
+
+    const changeLoading = () => {
+        let isLoad = true;
+        for (let i = 0; i < check.length; i++) {
+            isLoad = isLoad && check[i];
+        }
+
+        if (isLoad) {
+            setLoading(!isLoad);
+        }
+    }
+
+    const requestIntroInfos = () => {
+        fetch(introInfosURL)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("intro data : ", data);
+                setIntroInfo(data);
+                check[0] = true;
+                changeLoading();
+            }).catch((e) => {
+                console.log(e);
+                alert("오류 발생");
+            });
+    }
 
     const requestContentInfos = () => {
         fetch(contentInfosURL)
             .then((response) => response.json())
             .then((data) => {
-                setInfo(data);
-                setLoading(false);
+                setContentInfos(data);
+                check[1] = true;
+                changeLoading();
             }).catch((e) => {
                 console.log(e);
                 alert("오류 발생");
@@ -63,9 +64,19 @@ function ContentWrapper(props) {
             });
     }
 
+    let count = 0;
+    const loginPage = () => {
+        count++;
+        if (count === 5) {
+            window.location.href = `${window.location.origin}/login`;
+        }
+    }
+
     useEffect(() => {
         requestContentInfos();
+        requestIntroInfos();
         requestAmend();
+
         // Get the button
         const topButton = document.getElementById("topButton");
         const upButton = document.getElementById("upButton");
@@ -98,30 +109,29 @@ function ContentWrapper(props) {
 
         //한번 클릭시 컴포넌트 하나씩 올라가도록
         function backToUp() {
-            const count = infos.length;
+            const count = contentInfos.length;
             const top = target.scrollTop - ((target.scrollHeight - target.clientHeight) / count);
             target.scrollTop = top;
         }
     }, [])
 
-    const loadingMsg = loading ? "로딩 중입니다." : "";
+    const loadingMsg = "로딩중입니다.";
 
     return (
         <AmendContext.Provider value={isAmend}>
             <div className="relative w-full h-full">
                 <div className="flex flex-col w-full h-full">
-                    <Intro />
+                    {loading ? "로딩중입니다" : <Intro info={introInfo} />}
                     <div id="contentArea" className="lg:snap-y lg:snap-mandatory overflow-auto scrollbar-hide flex-1 w-full p-2 md:p-5">
                         <h2 className="text-2xl bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
-                        {loadingMsg}
                         {
-                            infos?.map((obj, index) => {
+                            loading ? loadingMsg : contentInfos?.map((obj, index) => {
                                 return (
                                     <Content info={obj} key={index} id={`content${index}`} />
                                 )
                             })
                         }
-                        <div className="text-right p-2 md:p-5 md:text-xl text-gray-600">
+                        <div onClick={() => loginPage()} className="text-right p-2 md:p-5 md:text-xl text-gray-600">
                             문의 전화 010-9189-3254
                         </div>
                     </div>
@@ -137,24 +147,104 @@ function ContentWrapper(props) {
 
 function Intro(props) {
 
-    const info = infroInfo;
+    const info = props.info;
+    let amend_file;
 
     const isAmend = useContext(AmendContext);
+    const url = `${window.location.origin}/data/intro`;
+
+    const requestAmendIntro = () => {
+
+        const formData = new FormData();
+        formData.append("file", amend_file);
+        formData.append("dto", new Blob([JSON.stringify(info)], { type: "application/json" }));
+
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    const changeInfoComment = (event) => {
+        const obj = event.target;
+        const comments = info.comments;
+        const index = obj.dataset.index;
+        comments[index] = obj.value;
+    }
+
+    const readURL = file => {
+        return new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = e => res(e.target.result);
+            reader.onerror = e => rej(e);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const preview = async event => {
+        const file = event.target.files[0];
+        const url = await readURL(file);
+        const img = document.getElementById("introImage");
+
+        info.image = file.name;
+        img.src = url;
+        amend_file = file;
+    };
 
     return (
-        <div className="h-1/2 md:h-1/4 md:flex">
+        <div className="relative h-1/2 md:h-1/4 md:flex">
             <div className="p-5 h-4/6 md:h-full md:flex-1 flex justify-center">
-                <img src={info.image} alt="" className="h-full"></img>
+                <img id="introImage" src={info.image} alt="" className="h-full"></img>
             </div>
+
             <div className=" md:h-full md:w-2/5 p-5">
                 {
                     info.comments.map((comment, index) => {
                         return (
-                            <textarea className="mb-1 w-full bg-transparent outline-none resize-none" readOnly={!isAmend} key={index} defaultValue={comment}>
+                            <textarea name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" onChange={(event) => changeInfoComment(event)} data-index={index} readOnly={!isAmend} key={index} defaultValue={comment}>
                             </textarea>
                         )
                     })
                 }
+            </div>
+            {isAmend ?
+                <div className="absolute w-30 h-30 right-0 bottom-0 opacity-30 hover:opacity-100">
+                    <form id="introAmmend">
+                        <input id="imageChangeInput" name="file" type="file" className="hidden" onChange={(event) => preview(event)}></input>
+                        <label htmlFor="imageChangeInput" className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 px-1 py-1.5">이미지 사진 변경</label>
+                    </form>
+                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
+                </div>
+                : ""}
+            <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+                id={`${props.id}Modal`} aria-hidden="true">
+                <div className="modal-dialog relative w-auto pointer-events-none">
+                    <div
+                        className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+                        <div
+                            className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+                            <h5 className="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">알림</h5>
+                            <button type="button"
+                                className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body relative p-4">
+                            수정하시겠습니까?
+                        </div>
+                        <div
+                            className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                            <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-dismiss="modal">닫기</button>
+                            <button className="bg-green-300 hover:bg-green-500 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" onClick={() => requestAmendIntro()}>수정</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
