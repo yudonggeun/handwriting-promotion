@@ -214,7 +214,7 @@ function Content(props) {
                 {
                     info.images.map((src, index) => {
                         return (
-                            <div className="hover:p-0 box-content p-2 md:hover:col-span-2 hover:row-span-2" key={index}>
+                            <div className="hover:p-0 box-content p-2" key={index}>
                                 <img className={`rounded-lg border ${index > 3 ? "sm:hidden md:inline" : ""}`} src={src} alt=""></img>
                             </div>
                         )
