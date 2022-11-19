@@ -119,10 +119,10 @@ function ContentWrapper(props) {
 
     return (
         <AmendContext.Provider value={isAmend}>
-            <div className="relative w-full h-full">
+            <div className="w-full h-full sm:overflow-auto sm:scrollbar-hide" >
                 <div className="flex flex-col w-full h-full">
                     {loading ? "로딩중입니다" : <Intro info={introInfo} />}
-                    <div id="contentArea" className="lg:snap-y lg:snap-mandatory overflow-auto scrollbar-hide flex-1 w-full p-2 md:p-5">
+                    <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full p-2 md:p-5">
                         <h2 className="text-2xl bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
                         {
                             loading ? loadingMsg : contentInfos?.map((obj, index) => {
@@ -150,6 +150,7 @@ function Intro(props) {
     const info = props.info;
     let amend_file;
 
+    const [reload, setReload] = useState(false);
     const isAmend = useContext(AmendContext);
     const url = `${window.location.origin}/data/intro`;
 
@@ -170,6 +171,11 @@ function Intro(props) {
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }
+
+    async function requestLogout(){
+        await fetch(`${window.location.origin}/admin/logout`)
+                .then(() => setReload(!reload));
     }
 
     const changeInfoComment = (event) => {
@@ -216,11 +222,10 @@ function Intro(props) {
             </div>
             {isAmend ?
                 <div className="absolute w-30 h-30 right-0 bottom-0 opacity-30 hover:opacity-100">
-                    <form id="introAmmend">
-                        <input id="imageChangeInput" name="file" type="file" className="hidden" onChange={(event) => preview(event)}></input>
-                        <label htmlFor="imageChangeInput" className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 px-1 py-1.5">이미지 사진 변경</label>
-                    </form>
-                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
+                    <input id="imageChangeInput" name="file" type="file" className="hidden" onChange={(event) => preview(event)}></input>
+                    <label htmlFor="imageChangeInput" className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 px-1 py-1.5">이미지 사진 변경</label>
+                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
+                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" onClick={() => requestLogout()}>로그아웃</button>
                 </div>
                 : ""}
             <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
