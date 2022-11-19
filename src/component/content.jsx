@@ -71,11 +71,13 @@ function ContentWrapper(props) {
             window.location.href = `${window.location.origin}/login`;
         }
     }
-
     useEffect(() => {
         requestContentInfos();
         requestIntroInfos();
         requestAmend();
+    }, []);
+    
+    useEffect(() => {
 
         // Get the button
         const topButton = document.getElementById("topButton");
@@ -110,8 +112,7 @@ function ContentWrapper(props) {
         //한번 클릭시 컴포넌트 하나씩 올라가도록
         function backToUp() {
             const count = contentInfos.length;
-            const top = target.scrollTop - ((target.scrollHeight - target.clientHeight) / count);
-            target.scrollTop = top;
+            target.scrollTop = target.scrollTop - ((target.scrollHeight - target.clientHeight) / count);
         }
     }, [])
 
