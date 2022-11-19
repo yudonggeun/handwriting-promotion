@@ -76,9 +76,8 @@ function ContentWrapper(props) {
         requestIntroInfos();
         requestAmend();
     }, []);
-    
-    useEffect(() => {
 
+    useEffect(() => {
         // Get the button
         const topButton = document.getElementById("topButton");
         const upButton = document.getElementById("upButton");
@@ -112,9 +111,9 @@ function ContentWrapper(props) {
         //한번 클릭시 컴포넌트 하나씩 올라가도록
         function backToUp() {
             const count = contentInfos.length;
-            target.scrollTop = target.scrollTop - ((target.scrollHeight - target.clientHeight) / count);
+            target.scrollTop = (target.scrollTop - ((target.scrollHeight - target.clientHeight) / count));
         }
-    }, [])
+    }, [loading])
 
     const loadingMsg = "로딩중입니다.";
 
