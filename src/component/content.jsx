@@ -102,7 +102,8 @@ function ContentWrapper(props) {
         }
         // When the user clicks on the button, scroll to the top of the document
         topButton.addEventListener("click", backToTop);
-        upButton.addEventListener("click", backToUp);
+        if (contentInfos?.length)
+            upButton.addEventListener("click", backToUp);
 
         function backToTop() {
             target.scrollTop = 0;
@@ -122,7 +123,7 @@ function ContentWrapper(props) {
             <div className="w-full h-full sm:overflow-auto sm:scrollbar-hide" >
                 <div className="flex flex-col w-full h-full">
                     {loading ? "로딩중입니다" : <Intro info={introInfo} />}
-                    <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full p-2 md:p-5">
+                    <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
                         <h2 className="text-2xl bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
                         {
                             loading ? loadingMsg : contentInfos?.map((obj, index) => {
@@ -173,9 +174,9 @@ function Intro(props) {
             });
     }
 
-    async function requestLogout(){
+    async function requestLogout() {
         await fetch(`${window.location.origin}/admin/logout`)
-                .then(() => setReload(!reload));
+            .then(() => setReload(!reload));
     }
 
     const changeInfoComment = (event) => {
@@ -304,13 +305,13 @@ function Content(props) {
     return (
         <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
             <input type="text" onChange={(event) => changeTitle(event)} readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
-            <textarea className="p-1 md:p-5 text-lg w-full outline-none resize-none" onChange={(event) => changeDescription(event)} readOnly={!isAmend} defaultValue={info.description}></textarea>
-            <div className="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-1">
+            <textarea className="p-1 md:p-5 text-md w-full outline-none resize-none" onChange={(event) => changeDescription(event)} readOnly={!isAmend} defaultValue={info.description}></textarea>
+            <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-1">
                 {
                     info.images.map((src, index) => {
                         return (
                             <div className="hover:p-0 box-content p-2" key={index}>
-                                <img className={`rounded-lg border ${index > 3 ? "sm:hidden md:inline" : ""}`} src={src} alt=""></img>
+                                <img className={`rounded-lg border`} src={src} alt=""></img>
                             </div>
                         )
                     })
