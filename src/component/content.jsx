@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import AmendContext from "../context/amend_status_context";
+import PageContext from "../context/page_context";
 
 function ContentWrapper(props) {
 
@@ -120,7 +121,7 @@ function ContentWrapper(props) {
 
     return (
         <AmendContext.Provider value={isAmend}>
-            <div className="w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
+            <div className="relative w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
                 <div className="flex flex-col w-full h-full">
                     {loading ? "로딩중입니다" : <Intro info={introInfo} />}
                     <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
@@ -261,6 +262,7 @@ function Content(props) {
 
     const [info, setInfo] = useState(props.info);
     const isAmend = useContext(AmendContext);
+    const changeView = useContext(PageContext);
 
     console.log(info);
 
@@ -323,7 +325,7 @@ function Content(props) {
             }
             <div className="flex justify-end">
                 {isAmend ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button> : ""}
-                <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1">더보기</button>
+                <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(null)}>더보기</button>
             </div>
 
             <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
