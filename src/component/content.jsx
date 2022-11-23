@@ -120,11 +120,11 @@ function ContentWrapper(props) {
 
     return (
         <AmendContext.Provider value={isAmend}>
-            <div className="w-full h-full sm:overflow-auto sm:scrollbar-hide" >
+            <div className="w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
                 <div className="flex flex-col w-full h-full">
                     {loading ? "로딩중입니다" : <Intro info={introInfo} />}
                     <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
-                        <h2 className="text-2xl bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
+                        <h2 className="text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
                         {
                             loading ? loadingMsg : contentInfos?.map((obj, index) => {
                                 return (
@@ -206,7 +206,7 @@ function Intro(props) {
     };
 
     return (
-        <div className="relative h-1/2 md:h-1/4 md:flex">
+        <div className="relative h-1/2 md:h-1/4 md:flex mb-5">
             <div className="p-5 h-4/6 md:h-full md:flex-1 flex justify-center">
                 <img id="introImage" src={info.image} alt="" className="h-full"></img>
             </div>
@@ -215,8 +215,9 @@ function Intro(props) {
                 {
                     info.comments.map((comment, index) => {
                         return (
-                            <textarea name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" onChange={(event) => changeInfoComment(event)} data-index={index} readOnly={!isAmend} key={index} defaultValue={comment}>
-                            </textarea>
+                            isAmend
+                                ? <textarea name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" onChange={(event) => changeInfoComment(event)} data-index={index} readOnly={!isAmend} key={index} defaultValue={comment}></textarea>
+                                : <div name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" data-index={index} key={index} >{comment}</div>
                         )
                     })
                 }
@@ -305,7 +306,6 @@ function Content(props) {
     return (
         <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
             <input type="text" onChange={(event) => changeTitle(event)} readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
-            <textarea className="p-1 md:p-5 text-md w-full outline-none resize-none" onChange={(event) => changeDescription(event)} readOnly={!isAmend} defaultValue={info.description}></textarea>
             <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-1">
                 {
                     info.images.map((src, index) => {
@@ -317,6 +317,10 @@ function Content(props) {
                     })
                 }
             </div>
+            {isAmend
+                ? <textarea className="p-1 md:p-5 text-md w-full outline-none resize-none" onChange={(event) => changeDescription(event)} readOnly={!isAmend} defaultValue={info.description}></textarea>
+                : <div className="p-5 text-md w-full outline-none resize-none">{info.description}</div>
+            }
             <div className="flex justify-end">
                 {isAmend ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button> : ""}
                 <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1">더보기</button>
