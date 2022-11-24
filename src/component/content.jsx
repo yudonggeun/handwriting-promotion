@@ -1,51 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import AmendContext from "../context/amend_status_context";
+import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 
 function ContentWrapper(props) {
 
-    const [contentInfos, setContentInfos] = useState(null);
+    const contentInfos = useContext(DetailInfoContext);
+    
     const [introInfo, setIntroInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [isAmend, setAmend] = useState(false);
     const amendURL = `${window.location.origin}/admin/isAmend`;
-    const contentInfosURL = `${window.location.origin}/data/content`;
     const introInfosURL = `${window.location.origin}/data/intro`;
-
-    const check = [false, false];//[intro, content]
-
-    const changeLoading = () => {
-        let isLoad = true;
-        for (let i = 0; i < check.length; i++) {
-            isLoad = isLoad && check[i];
-        }
-
-        if (isLoad) {
-            setLoading(!isLoad);
-        }
-    }
-
+    let loading = contentInfos == null ||  introInfo == null;
+    
     const requestIntroInfos = () => {
         fetch(introInfosURL)
             .then((response) => response.json())
             .then((data) => {
-                console.log("intro data : ", data);
                 setIntroInfo(data);
-                check[0] = true;
-                changeLoading();
-            }).catch((e) => {
-                console.log(e);
-                alert("오류 발생");
-            });
-    }
-
-    const requestContentInfos = () => {
-        fetch(contentInfosURL)
-            .then((response) => response.json())
-            .then((data) => {
-                setContentInfos(data);
-                check[1] = true;
-                changeLoading();
             }).catch((e) => {
                 console.log(e);
                 alert("오류 발생");
@@ -73,7 +45,6 @@ function ContentWrapper(props) {
         }
     }
     useEffect(() => {
-        requestContentInfos();
         requestIntroInfos();
         requestAmend();
     }, []);
@@ -129,7 +100,7 @@ function ContentWrapper(props) {
                         {
                             loading ? loadingMsg : contentInfos?.map((obj, index) => {
                                 return (
-                                    <Content info={obj} key={index} id={`content${index}`} />
+                                    <Content info={obj} index={index} key={index} id={`content${index}`} />
                                 )
                             })
                         }
@@ -264,8 +235,6 @@ function Content(props) {
     const isAmend = useContext(AmendContext);
     const changeView = useContext(PageContext);
 
-    console.log(info);
-
     const id = info.id;
     const images = info.images;
     let title = info.title;
@@ -312,7 +281,7 @@ function Content(props) {
                 {
                     info.images.map((src, index) => {
                         return (
-                            <div className="hover:p-0 box-content p-2" key={index}>
+                            <div className={`hover:p-0 box-content p-2 ${index > 3 ? "hidden" : ""} md:block`} key={index}>
                                 <img className={`rounded-lg border`} src={src} alt=""></img>
                             </div>
                         )
@@ -325,7 +294,7 @@ function Content(props) {
             }
             <div className="flex justify-end">
                 {isAmend ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button> : ""}
-                <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(null)}>더보기</button>
+                <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(props.index)}>더보기</button>
             </div>
 
             <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"

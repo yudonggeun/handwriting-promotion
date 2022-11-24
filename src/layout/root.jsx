@@ -1,36 +1,60 @@
-import React from "react";
-import { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import ContentWrapper from "../component/content";
 import DetailWrapper from "../component/detail_image";
+import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 
-function RootLayout(props) {
+const contentInfosURL = `${window.location.origin}/data/content`;
 
-    const pageView = useContext(PageContext);
+function RootLayout() {
 
-    // top bottom 을 이용한 애니매이션 효과 적용해서 페이지 이동 구현하기
-    const changeViewDetail = (info) => {
-        const root = document.getElementById("service_root");
-        root.scrollTop = root.clientHeight;
+    const [contentInfos, setContentInfos] = useState(null);
+    const [contentIndex, setContentIndex] = useState(0);
+
+    const changeViewDetail = (index) => {
+        const detail_page = document.getElementById("detail_wrapper");
+        const content_page = document.getElementById("content_wrapper");
+        content_page.hidden = true;
+        detail_page.hidden = false;
+        setContentIndex(index);
     }
 
     const changeViewHome = () => {
-        const root = document.getElementById("service_root");
-        root.scrollTop = 0;
+        const detail_page = document.getElementById("detail_wrapper");
+        const content_page = document.getElementById("content_wrapper");
+        content_page.hidden = false;
+        detail_page.hidden = true;
     }
+
+    const requestContentInfos = () => {
+        fetch(contentInfosURL)
+            .then((response) => response.json())
+            .then((data) => {
+                setContentInfos(data);
+            }).catch((e) => {
+                console.log(e);
+                alert("오류 발생");
+            });
+    }
+
+    useEffect(() => {
+        requestContentInfos();
+    }, []);
 
     return (
         <div id="service_root" className="w-screen h-screen overflow-hidden">
-            <div className="h-full w-full">
+            <DetailInfoContext.Provider value={contentInfos}>
+            <div id="content_wrapper" className="h-full w-full">
                 <PageContext.Provider value={changeViewDetail}>
-                    <ContentWrapper />
+                    <ContentWrapper/>
                 </PageContext.Provider>
             </div>
-            <div className="h-full w-full">
+            <div id="detail_wrapper" className="h-full w-full" hidden>
                 <PageContext.Provider value={changeViewHome}>
-                    <DetailWrapper />
+                    <DetailWrapper index={contentIndex}/>
                 </PageContext.Provider>
             </div>
+            </DetailInfoContext.Provider>
         </div>
     )
 }

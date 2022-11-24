@@ -1,16 +1,14 @@
 import React from "react";
 import { useContext } from "react";
+import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 
 function DetailWrapper(props) {
 
-
-    const title = "주제 입니다.";
-    const titleButtonPreSrc = "";
-    const titleButtonBackSrc = "";
-    const buttonBackSrc = "";
-
+    const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
+
+    let loading = contentInfo == null;
 
     const temper_src = [
         "https://mblogthumb-phinf.pstatic.net/20111129_250/stupidpark_1322533136260BDN70_JPEG/1322324832103.jpg?type=w2",
@@ -19,7 +17,7 @@ function DetailWrapper(props) {
     ];
 
     let t_array = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 20; i++) {
         t_array.push(0);
     }
 
@@ -31,7 +29,8 @@ function DetailWrapper(props) {
 
     return (
         <div className="relative flex flex-col w-full h-full">
-            <div className="flex-1 grid grid-cols-1 md:flex overflow-auto">
+            <div className="flex-1 grid grid-cols-1 overflow-auto  
+                            md:flex md:mt-10">
 
                 <div className="md:w-6/12 lg:w-5/12 xl:4/12 2xl:3/12 h-fit
                                 md:order-last md:p-5
@@ -57,17 +56,19 @@ function DetailWrapper(props) {
                             )
                         })
                     }
+                    <nav className="p-3 col-span-3 invisible md:hidden">sample</nav>
                 </div>
 
             </div>
 
-            <div className="md:order-first rounded-t-lg md:rounded-none border flex bg-blue-100 w-full p-3">
+            <div className="absolute bottom-0 w-full flex rounded-t-lg border bg-blue-100 p-3
+                            md:order-first md:rounded-none md:top-0 md:bottom-auto">
                 <button>pre</button>
-                <nav className="flex-1 text-center">{title}</nav>
+                <nav className="flex-1 text-center">{loading ? "loading" : contentInfo[props.index].title}</nav>
                 <button>back</button>
             </div>
 
-            <div className="absolute bottom-10 right-0 p-1
+            <div className="absolute bottom-10 md:top-10 right-0 p-1
                             md:bottom-0 md:p-3">
                 <button className="opacity-60 hover:opacity-100 p-2 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>back</button>
             </div>
