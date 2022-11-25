@@ -1,41 +1,21 @@
 import React from "react";
-import { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 
-const contentInfosURL = `${window.location.origin}/data/content/image`;
-
 function DetailWrapper(props) {
 
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
-    const [imageSrcs, setImageSources] = useState([]);
 
     let loading = contentInfo == null;
 
-    const requestImageSrouces = () => {
-        fetch(contentInfosURL + "?content_id=" + contentInfo[props.index].id)
-            .then((response) => response.json())
-            .then((data) => {
-                setImageSources(data);
-            }).catch((e) => {
-                console.log(e);
-                alert("오류 발생");
-            });
-    }
-
     useEffect(() => {
-        requestImageSrouces();
-    }, []);
-
-
-    // const temper_src = [
-    //     "https://mblogthumb-phinf.pstatic.net/20111129_250/stupidpark_1322533136260BDN70_JPEG/1322324832103.jpg?type=w2",
-    //     "https://storage.googleapis.com/jjalbot/2018/12/qXdIxpDVf/zzal.jpg",
-    //     "https://mblogthumb-phinf.pstatic.net/MjAxOTA0MTFfMTYg/MDAxNTU0OTY0NDE2ODA5.ITBUEU5NSHZWsfuG8qpH3fqyS0V481X7w1ru5Eqh-z4g.CRGPgC-rGAw4FFk5eX5v7wMYYbFdAfgyyCt4A-xuiAEg.GIF.goproblem/1548256753.gif?type=w2"
-    // ];
+        //init
+        const image_viewer = document.getElementById("detail_image_view");
+        image_viewer.src = ``;
+    })
 
     const clickImageAtList = (event) => {
         const src = event.target.src;
@@ -62,7 +42,8 @@ function DetailWrapper(props) {
                                 overflow-auto scrollbar-hide
                                 ">
                     {
-                        imageSrcs.map((src, index) => {
+                        props.imgSrcs ? 
+                        props.imgSrcs.map((src, index) => {
                             return (
                                 <div className=" 
                                                 md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
@@ -71,6 +52,7 @@ function DetailWrapper(props) {
                                 </div>
                             )
                         })
+                        : "loading"
                     }
                     <nav className="p-3 col-span-3 invisible md:hidden">sample</nav>
                 </div>
@@ -91,6 +73,5 @@ function DetailWrapper(props) {
         </div>
     )
 }
-
 
 export default DetailWrapper;
