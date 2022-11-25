@@ -42,17 +42,18 @@ function DetailWrapper(props) {
                                 overflow-auto scrollbar-hide
                                 ">
                     {
-                        props.imgSrcs ? 
-                        props.imgSrcs.map((src, index) => {
-                            return (
-                                <div className=" 
+                        props.imgSrcs ?
+                            props.imgSrcs.map((src, index) => {
+                                return (
+                                    <div className="relative
                                                 md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
                                                 hover:shadow-2xl hover:bg-gray-200 " key={index}>
-                                    <img className="h-full md:rounded-lg border border-0 object-fill" src={src} onClick={(event) => clickImageAtList(event)} alt=""></img>
-                                </div>
-                            )
-                        })
-                        : "loading"
+                                        <input className="absolute top-0 right-0 m-3" type="checkbox"></input>
+                                        <img className="h-full md:rounded-lg border border-0 object-fill" src={src} onClick={(event) => clickImageAtList(event)} alt=""></img>
+                                    </div>
+                                )
+                            })
+                            : "loading"
                     }
                     <nav className="p-3 col-span-3 invisible md:hidden">sample</nav>
                 </div>
@@ -68,6 +69,9 @@ function DetailWrapper(props) {
 
             <div className="absolute bottom-10 md:top-10 right-0 p-1
                             md:bottom-0 md:p-3">
+                <input className="hidden" type="file" id="additionalImage" multiple onChange={() => alert("사진을 추가하시겠습니까?")}></input>
+                <label htmlFor="additionalImage" className="opacity-60 hover:opacity-100 p-2 mr-5 bg-green-200 text-gray-600 rounded-full">사진추가</label>
+                <button className="opacity-60 hover:opacity-100 p-2 mr-5 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>사진삭제</button>
                 <button className="opacity-60 hover:opacity-100 p-2 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>back</button>
             </div>
         </div>
