@@ -4,12 +4,21 @@ import { useContext } from "react";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 
+
+//TODO
+/*
+1. pre/back 버튼 이미지 삽입
+2. 로그인 비로그인 ui 분리
+3. 사진 추가 api , 화면 적용 처리
+4. 사진 삭제 기능
+*/
 function DetailWrapper(props) {
 
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
 
     let loading = contentInfo == null;
+    let files = [];
 
     useEffect(() => {
         //init
@@ -17,11 +26,30 @@ function DetailWrapper(props) {
         image_viewer.src = ``;
     })
 
-    const clickImageAtList = (event) => {
-        const src = event.target.src;
-        const image_viewer = document.getElementById("detail_image_view");
-        image_viewer.src = src;
-    };
+    //사진 추가 버튼 동작
+    const changeFile = (event) => {
+        const fileInput = event.target;
+        const beforeFileSize = files.length;
+
+        for (let i = 0; i < fileInput.files.length; i++) {
+            const file = fileInput.files[i];
+            if (checkFile(file))
+                files.push(file);
+        }
+
+        for (let i = beforeFileSize; i < files.length; i++) {
+
+        }
+        console.log("file", files);
+    }
+
+    const checkFile = (file) => {
+        const fileLength = file.name.length;
+        const dotIndex = file.name.lastIndexOf(".");
+        const type = file.name.substring(dotIndex + 1, fileLength).toLowerCase();
+        console.log("확장자", type);
+        return type === "png" || type === "jpg" || type === "gif";
+    }
 
     return (
         <div className="relative flex flex-col w-full h-full">
@@ -37,7 +65,9 @@ function DetailWrapper(props) {
                         <img id="detail_image_view" src="" alt=""></img>
                     </div>
                 </div>
-                <div className="grid content-start grid-cols-3 
+                <div
+                    id="imageListView"
+                    className="grid content-start grid-cols-3 
                                 md:flex-1 md:flex md:flex-wrap md:p-5 md:gap-5
                                 overflow-auto scrollbar-hide
                                 ">
@@ -45,15 +75,24 @@ function DetailWrapper(props) {
                         props.imgSrcs ?
                             props.imgSrcs.map((src, index) => {
                                 return (
-                                    <div className="relative
-                                                md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
-                                                hover:shadow-2xl hover:bg-gray-200 " key={index}>
-                                        <input className="absolute top-0 right-0 m-3" type="checkbox"></input>
-                                        <img className="h-full md:rounded-lg border border-0 object-fill" src={src} onClick={(event) => clickImageAtList(event)} alt=""></img>
-                                    </div>
+                                    <ImageComponent key={index} src={src} />
                                 )
                             })
                             : "loading"
+                    }
+                    {
+                        files.map(async (file, index) => {
+                            const reader = new FileReader();
+                            let src = "";
+                            reader.onload = function (e) {
+                                src = e.target.result;
+                            };
+                            await reader.readAsDataURL(file);
+                            console.log("target", file.target.result);
+                            return (
+                                <ImageComponent src={src} key={`file${index}`}></ImageComponent>
+                            )
+                        })
                     }
                     <nav className="p-3 col-span-3 invisible md:hidden">sample</nav>
                 </div>
@@ -69,11 +108,29 @@ function DetailWrapper(props) {
 
             <div className="absolute bottom-10 md:top-10 right-0 p-1
                             md:bottom-0 md:p-3">
-                <input className="hidden" type="file" id="additionalImage" multiple onChange={() => alert("사진을 추가하시겠습니까?")}></input>
+                <input className="hidden" type="file" id="additionalImage" multiple onChange={(event) => changeFile(event)}></input>
                 <label htmlFor="additionalImage" className="opacity-60 hover:opacity-100 p-2 mr-5 bg-green-200 text-gray-600 rounded-full">사진추가</label>
                 <button className="opacity-60 hover:opacity-100 p-2 mr-5 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>사진삭제</button>
                 <button className="opacity-60 hover:opacity-100 p-2 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>back</button>
             </div>
+        </div>
+    )
+}
+
+function ImageComponent(props) {
+
+    const clickImageAtList = (event) => {
+        const src = event.target.src;
+        const image_viewer = document.getElementById("detail_image_view");
+        image_viewer.src = src;
+    };
+
+    return (
+        <div className="relative
+                        md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
+                        hover:shadow-2xl hover:bg-gray-200 ">
+            <input className="absolute top-0 right-0 m-3" type="checkbox"></input>
+            <img className="h-full md:rounded-lg border border-0 object-fill" src={props.src} onClick={(event) => clickImageAtList(event)} alt=""></img>
         </div>
     )
 }
