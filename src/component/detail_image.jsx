@@ -26,20 +26,38 @@ function DetailWrapper(props) {
         image_viewer.src = ``;
     })
 
+
+    const requestAddDetailImage = async () => {
+        const url = `${window.location.origin}/data/detail/${contentInfo[props.index].id}`;
+        const formData = new FormData(document.getElementById("detail_form"));
+
+        console.log("url", url);
+
+        fetch(url, {
+            method: 'PUT',
+            body: formData
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+                props.updateImgSrc(props.index);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
     //사진 추가 버튼 동작
     const changeFile = (event) => {
         const fileInput = event.target;
-        const beforeFileSize = files.length;
 
+        // fileInput.files;
         for (let i = 0; i < fileInput.files.length; i++) {
             const file = fileInput.files[i];
             if (checkFile(file))
                 files.push(file);
         }
-
-        for (let i = beforeFileSize; i < files.length; i++) {
-
-        }
+        requestAddDetailImage();
         console.log("file", files);
     }
 
@@ -80,20 +98,6 @@ function DetailWrapper(props) {
                             })
                             : "loading"
                     }
-                    {
-                        files.map(async (file, index) => {
-                            const reader = new FileReader();
-                            let src = "";
-                            reader.onload = function (e) {
-                                src = e.target.result;
-                            };
-                            await reader.readAsDataURL(file);
-                            console.log("target", file.target.result);
-                            return (
-                                <ImageComponent src={src} key={`file${index}`}></ImageComponent>
-                            )
-                        })
-                    }
                     <nav className="p-3 col-span-3 invisible md:hidden">sample</nav>
                 </div>
 
@@ -101,18 +105,18 @@ function DetailWrapper(props) {
 
             <div className="absolute bottom-0 w-full flex rounded-t-lg border bg-blue-100 p-3
                             md:order-first md:rounded-none md:top-0 md:bottom-auto">
-                <button>pre</button>
+                {/* <button>pre</button> */}
                 <nav className="flex-1 text-center">{loading ? "loading" : contentInfo[props.index].title}</nav>
-                <button>back</button>
+                {/* <button>back</button> */}
             </div>
 
-            <div className="absolute bottom-10 md:top-10 right-0 p-1
+            <form id="detail_form" className="absolute bottom-10 md:top-10 right-0 p-1
                             md:bottom-0 md:p-3">
-                <input className="hidden" type="file" id="additionalImage" multiple onChange={(event) => changeFile(event)}></input>
+                <input className="hidden" type="file" name="image" id="additionalImage" multiple onChange={(event) => changeFile(event)}></input>
                 <label htmlFor="additionalImage" className="opacity-60 hover:opacity-100 p-2 mr-5 bg-green-200 text-gray-600 rounded-full">사진추가</label>
                 <button className="opacity-60 hover:opacity-100 p-2 mr-5 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>사진삭제</button>
                 <button className="opacity-60 hover:opacity-100 p-2 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>back</button>
-            </div>
+            </form>
         </div>
     )
 }

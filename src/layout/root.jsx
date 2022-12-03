@@ -65,7 +65,7 @@ function RootLayout() {
                 </div>
                 <div id="detail_wrapper" className="h-full w-full" hidden>
                     <PageContext.Provider value={changeViewHome}>
-                        <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} />
+                        <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} updateImgSrc={changeViewDetail}/>
                     </PageContext.Provider>
                 </div>
             </DetailInfoContext.Provider>
