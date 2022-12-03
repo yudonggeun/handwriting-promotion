@@ -129,6 +129,7 @@ function Intro(props) {
 
     const requestAmendIntro = () => {
 
+        console.log("call", url);
         const formData = new FormData();
         formData.append("file", amend_file);
         formData.append("dto", new Blob([JSON.stringify(info)], { type: "application/json" }));
