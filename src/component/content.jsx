@@ -6,13 +6,13 @@ import PageContext from "../context/page_context";
 function ContentWrapper(props) {
 
     const contentInfos = useContext(DetailInfoContext);
-    
+
     const [introInfo, setIntroInfo] = useState(null);
-    const [isAmend, setAmend] = useState(false);
+    const isAmend = useContext(AmendContext);
     const amendURL = `${window.location.origin}/admin/isAmend`;
     const introInfosURL = `${window.location.origin}/data/intro`;
-    let loading = contentInfos == null ||  introInfo == null;
-    
+    let loading = contentInfos == null || introInfo == null;
+
     const requestIntroInfos = () => {
         fetch(introInfosURL)
             .then((response) => response.json())
@@ -21,19 +21,6 @@ function ContentWrapper(props) {
             }).catch((e) => {
                 console.log(e);
                 alert("오류 발생");
-            });
-    }
-
-    const requestAmend = () => {
-        fetch(amendURL)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === true) {
-                    setAmend(data.amendAuthority);
-                }
-            }).catch((e) => {
-                console.log(e);
-                setAmend(false);
             });
     }
 
@@ -46,7 +33,6 @@ function ContentWrapper(props) {
     }
     useEffect(() => {
         requestIntroInfos();
-        requestAmend();
     }, []);
 
     useEffect(() => {
@@ -91,30 +77,28 @@ function ContentWrapper(props) {
     const loadingMsg = "로딩중입니다.";
 
     return (
-        <AmendContext.Provider value={isAmend}>
-            <div className="relative w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
-                <div className="flex flex-col w-full h-full">
-                    {loading ? "로딩중입니다" : <Intro info={introInfo} />}
-                    <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
-                        <h2 className="text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
-                        {
-                            loading ? loadingMsg : contentInfos?.map((obj, index) => {
-                                return (
-                                    <Content info={obj} index={index} key={index} id={`content${index}`} />
-                                )
-                            })
-                        }
-                        <div onClick={() => loginPage()} className="text-right p-2 md:p-5 md:text-xl text-gray-600">
-                            문의 전화 010-9189-3254
-                        </div>
+        <div className="relative w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
+            <div className="flex flex-col w-full h-full">
+                {loading ? "로딩중입니다" : <Intro info={introInfo} />}
+                <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
+                    <h2 className="text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
+                    {
+                        loading ? loadingMsg : contentInfos?.map((obj, index) => {
+                            return (
+                                <Content info={obj} index={index} key={index} id={`content${index}`} />
+                            )
+                        })
+                    }
+                    <div onClick={() => loginPage()} className="text-right p-2 md:p-5 md:text-xl text-gray-600">
+                        문의 전화 010-9189-3254
                     </div>
                 </div>
-                <div className="absolute right-0 bottom-0 flex flex-col w-fit m-2">
-                    <button id="topButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
-                    <button id="upButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50">up</button>
-                </div>
             </div>
-        </AmendContext.Provider>
+            <div className="absolute right-0 bottom-0 flex flex-col w-fit m-2">
+                <button id="topButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
+                <button id="upButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50">up</button>
+            </div>
+        </div>
     )
 }
 

@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useContext } from "react";
+import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 
@@ -9,14 +10,12 @@ import PageContext from "../context/page_context";
 //TODO
 /*
 1. pre/back 버튼 이미지 삽입
-2. 로그인 비로그인 ui 분리
-3. 사진 추가 api , 화면 적용 처리
-4. 사진 삭제 기능
 */
 function DetailWrapper(props) {
 
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
+    const isAmend = useContext(AmendContext);
     const [imgList, setImageList] = useState(props.imgSrcs);
 
     const deleteImageSet = new Set();
@@ -130,8 +129,13 @@ function DetailWrapper(props) {
             <form id="detail_form" className="absolute bottom-10 md:top-10 right-0 p-1
                             md:bottom-0 md:p-3">
                 <input className="hidden" type="file" name="image" id="additionalImage" multiple onChange={() => requestAddDetailImage()}></input>
-                <label htmlFor="additionalImage" className="opacity-60 hover:opacity-100 p-2 mr-5 bg-green-200 text-gray-600 rounded-full">사진추가</label>
-                <button type="button" className="opacity-60 hover:opacity-100 p-2 mr-5 bg-red-200 text-red-500 rounded-full" onClick={() => requestDeleteImage()}>사진삭제</button>
+                {
+                    isAmend ?
+                        <label htmlFor="additionalImage" className="opacity-60 hover:opacity-100 p-2 mr-5 bg-green-200 text-gray-600 rounded-full">사진추가</label> : ""
+                }{
+                    isAmend ? <button type="button" className="opacity-60 hover:opacity-100 p-2 mr-5 bg-red-200 text-red-500 rounded-full" onClick={() => requestDeleteImage()}>사진삭제</button>
+                        : ""
+                }
                 <button type="button" className="opacity-60 hover:opacity-100 p-2 bg-red-200 text-red-500 rounded-full" onClick={() => changeView()}>back</button>
             </form>
         </div>
@@ -141,6 +145,7 @@ function DetailWrapper(props) {
 function ImageComponent(props) {
 
     const deleteImageSet = props.deleteImageSet;
+    const isAmend = useContext(AmendContext);
 
     const clickImageAtList = (event) => {
         const src = event.target.src;
@@ -162,7 +167,9 @@ function ImageComponent(props) {
         <div className="relative
                         md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
                         hover:shadow-2xl hover:bg-gray-200 ">
-            <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src} onClick={(event) => clickCheckBox(event)}></input>
+            {
+                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src} onClick={(event) => clickCheckBox(event)}></input> : ""
+            }
             <img className="h-full md:rounded-lg border border-0 object-fill" src={props.src} onClick={(event) => clickImageAtList(event)} alt=""></img>
         </div>
     )
