@@ -6,12 +6,12 @@ import RootLayout from './layout/root';
 function App() {
   return (
     <div>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/login' element={<LoginPage />}></Route>
-          <Route path='*' element={<RootLayout />}></Route>
-        </Routes>
-      </BrowserRouter>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/login' element={<LoginPage />}></Route>
+            <Route path='*' element={<RootLayout />}></Route>
+          </Routes>
+        </BrowserRouter>
     </div>
   );
 }

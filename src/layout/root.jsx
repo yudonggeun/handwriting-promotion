@@ -4,11 +4,13 @@ import DetailWrapper from "../component/detail_image";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
-
-const contentInfosURL = `${window.location.origin}/data/content`;
-const amendURL = `${window.location.origin}/admin/isAmend`;
+import UrlContext from "../context/url";
 
 function RootLayout() {
+
+    const host = window.location.origin;
+    const contentInfosURL = `${host}/data/content`;
+    const amendURL = `${host}/admin/isAmend`;
 
     const [pageInfo, setPageInfo] = useState({
         page: "main",
@@ -81,26 +83,28 @@ function RootLayout() {
 
     return (
         <div id="service_root" className="w-screen h-screen overflow-hidden">
-            <AmendContext.Provider value={isAmend}>
+            <UrlContext.Provider value={host}>
+                <AmendContext.Provider value={isAmend}>
 
-                <DetailInfoContext.Provider value={contentInfos}>
-                    {
-                        pageInfo.page === "main"
-                            ?
-                            <div id="content_wrapper" className="h-full w-full">
-                                <PageContext.Provider value={changeViewDetail}>
-                                    <ContentWrapper />
-                                </PageContext.Provider>
-                            </div>
-                            :
-                            <div id="detail_wrapper" className="h-full w-full">
-                                <PageContext.Provider value={changeViewHome}>
-                                    <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} />
-                                </PageContext.Provider>
-                            </div>
-                    }
-                </DetailInfoContext.Provider>
-            </AmendContext.Provider>
+                    <DetailInfoContext.Provider value={contentInfos}>
+                        {
+                            pageInfo.page === "main"
+                                ?
+                                <div id="content_wrapper" className="h-full w-full">
+                                    <PageContext.Provider value={changeViewDetail}>
+                                        <ContentWrapper />
+                                    </PageContext.Provider>
+                                </div>
+                                :
+                                <div id="detail_wrapper" className="h-full w-full">
+                                    <PageContext.Provider value={changeViewHome}>
+                                        <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} />
+                                    </PageContext.Provider>
+                                </div>
+                        }
+                    </DetailInfoContext.Provider>
+                </AmendContext.Provider>
+            </UrlContext.Provider>
         </div>
     )
 }

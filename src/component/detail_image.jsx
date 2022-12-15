@@ -5,6 +5,7 @@ import { useContext } from "react";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
+import UrlContext from "../context/url";
 
 
 //TODO
@@ -13,6 +14,7 @@ import PageContext from "../context/page_context";
 */
 function DetailWrapper(props) {
 
+    const host = useContext(UrlContext);
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
     const isAmend = useContext(AmendContext);
@@ -29,7 +31,7 @@ function DetailWrapper(props) {
     })
 
     const requestImageSrouces = async (id) => {
-        const contentImageURL = `${window.location.origin}/data/content/image`;
+        const contentImageURL = `${host}/data/content/image`;
 
         console.log("call", contentImageURL);
         return await fetch(contentImageURL + "?content_id=" + id)
@@ -41,7 +43,7 @@ function DetailWrapper(props) {
     }
 
     const requestAddDetailImage = async () => {
-        const url = `${window.location.origin}/data/detail/${contentInfo[props.index].id}`;
+        const url = `${host}/data/detail/${contentInfo[props.index].id}`;
         const formData = new FormData(document.getElementById("detail_form"));
 
         console.log("call", url);
@@ -62,7 +64,7 @@ function DetailWrapper(props) {
     }
 
     const requestDeleteImage = () => {
-        const url = `${window.location.origin}/data/detail/${contentInfo[props.index].id}`;
+        const url = `${host}/data/detail/${contentInfo[props.index].id}`;
         console.log("call", url);
 
         fetch(url, {

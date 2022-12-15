@@ -2,15 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
+import UrlContext from "../context/url";
 
 function ContentWrapper(props) {
 
+    const host = useContext(UrlContext);
     const contentInfos = useContext(DetailInfoContext);
 
     const [introInfo, setIntroInfo] = useState(null);
-    const isAmend = useContext(AmendContext);
-    const amendURL = `${window.location.origin}/admin/isAmend`;
-    const introInfosURL = `${window.location.origin}/data/intro`;
+    const introInfosURL = `${host}/data/intro`;
     let loading = contentInfos == null || introInfo == null;
 
     const requestIntroInfos = () => {
@@ -28,7 +28,7 @@ function ContentWrapper(props) {
     const loginPage = () => {
         count++;
         if (count === 5) {
-            window.location.href = `${window.location.origin}/login`;
+            window.location.href = `${host}/login`;
         }
     }
     useEffect(() => {
@@ -104,12 +104,13 @@ function ContentWrapper(props) {
 
 function Intro(props) {
 
+    const host = useContext(UrlContext);
     const info = props.info;
     let amend_file;
 
     const [reload, setReload] = useState(false);
     const isAmend = useContext(AmendContext);
-    const url = `${window.location.origin}/data/intro`;
+    const url = `${host}/data/intro`;
 
     const requestAmendIntro = () => {
 
@@ -132,7 +133,7 @@ function Intro(props) {
     }
 
     async function requestLogout() {
-        await fetch(`${window.location.origin}/admin/logout`)
+        await fetch(`${host}/admin/logout`)
             .then(() => setReload(!reload));
     }
 
@@ -225,7 +226,8 @@ function Content(props) {
     let title = info.title;
     let description = info.description;
 
-    const url = `${window.location.origin}/data/content`;
+    const host = useContext(UrlContext);
+    const url = `${host}/data/content`;
 
     const requestAmendContent = () => {
         fetch(url, {
