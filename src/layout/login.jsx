@@ -1,11 +1,8 @@
 import React from "react";
-import { useContext } from "react";
-import UrlContext from "../context/url";
 
 function LoginPage(props) {
 
-    const host = useContext(UrlContext);
-    const url = `${host}/admin/login`;
+    const url = `http://host.docker.internal:35423/api/admin/login`;
 
     const requestLogin = () => {
 

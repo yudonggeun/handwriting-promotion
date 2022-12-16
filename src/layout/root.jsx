@@ -53,7 +53,7 @@ function RootLayout() {
     }
 
     const requestImageSrouces = async (id) => {
-        const contentImageURL = `${window.location.origin}/data/content/image`;
+        const contentImageURL = `${host}/data/content/image`;
 
         console.log("call", contentImageURL);
         return await fetch(contentImageURL + "?content_id=" + id)
