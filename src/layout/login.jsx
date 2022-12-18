@@ -2,7 +2,7 @@ import React from "react";
 
 function LoginPage(props) {
 
-    const url = `http://host.docker.internal:35423/api/admin/login`;
+    const url = `${window.location.protocol}//${window.location.host}/api/admin/login`;
 
     const requestLogin = () => {
 

@@ -8,7 +8,7 @@ import UrlContext from "../context/url";
 
 function RootLayout() {
 
-    const host = "http://host.docker.internal:35423/api";
+    const host = `${window.location.protocol}//${window.location.host}/api`;
     const contentInfosURL = `${host}/data/content`;
     const amendURL = `${host}/admin/isAmend`;
 

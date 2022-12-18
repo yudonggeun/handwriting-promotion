@@ -28,7 +28,7 @@ function ContentWrapper(props) {
     const loginPage = () => {
         count++;
         if (count === 5) {
-            window.location.href = `http://host.docker.internal:35423/login`;
+            window.location.href = `${window.location.protocol}//${window.location.host}/login`;
         }
     }
     useEffect(() => {
