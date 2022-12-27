@@ -96,9 +96,7 @@ function ContentWrapper(props) {
                     {
                         isAmend
                             ?
-                            <div className="">
-                                <button>홍보 추가</button>
-                            </div>
+                                <ContentForm></ContentForm>
                             : ""
                     }
                 </div>
@@ -107,6 +105,53 @@ function ContentWrapper(props) {
                 <button id="topButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
                 <button id="upButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50">up</button>
             </div>
+        </div>
+    )
+}
+
+function ContentForm(props) {
+
+    const host = useContext(UrlContext);
+
+    const requestCreateDetail = async () => {
+        const url = `${host}/data/content`;
+        console.log("call", url);
+
+        const title = document.getElementById("new_content_title").value;
+        const description = document.getElementById("new_content_description").value;
+
+        if(title === ""){
+            alert("제목은 필수로 입력해야합니다.");
+            return;
+        }
+
+        const formData = new FormData(document.getElementById("new_content_form"));
+        formData.append("dto", new Blob([JSON.stringify({
+            title: title,
+            description: description
+        })], { type: "application/json" }));
+
+        fetch(url, {
+            method: 'PUT',
+            body: formData
+        })
+            .then((response) => response.json())
+            .then(async (data) => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    return (
+        <div className="">
+            <input id="new_content_title" type="text">제목</input>
+            <textarea id="new_content_description">설명</textarea>
+            <form id="new_content_form">
+                <input name="image" type="file" multiple></input>
+            </form>
+            <button onClick={() => requestCreateDetail()}>홍보 추가</button>
         </div>
     )
 }
