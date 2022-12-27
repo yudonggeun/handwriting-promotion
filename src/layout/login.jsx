@@ -1,10 +1,8 @@
 import React from "react";
-import { useContext } from "react";
-import UrlContext from "../context/url";
 
 function LoginPage(props) {
 
-    const host = useContext(UrlContext);
+    const host = window.location.origin;
     const url = `${host}/admin/login`;
 
     const requestLogin = () => {
