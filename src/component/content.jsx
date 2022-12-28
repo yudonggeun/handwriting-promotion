@@ -6,11 +6,23 @@ import UrlContext from "../context/url";
 
 function ContentWrapper(props) {
 
+    const loadingContent = {
+        id: -1,
+        title: "로딩",
+        description: "로딩",
+        images: []
+    };
+    const loadingIntro = {
+        image: "no_image.png",
+        comments: ["로딩"]
+    }
+
     const host = useContext(UrlContext);
     const contentInfos = useContext(DetailInfoContext);
 
-    const [introInfo, setIntroInfo] = useState(null);
+    const [introInfo, setIntroInfo] = useState(loadingIntro);
     const introInfosURL = `${host}/data/intro`;
+    const isAmend = useContext(AmendContext);
     let loading = contentInfos == null || introInfo == null;
 
     const requestIntroInfos = () => {
@@ -74,29 +86,146 @@ function ContentWrapper(props) {
         }
     }, [loading])
 
-    const loadingMsg = "로딩중입니다.";
-
     return (
         <div className="relative w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
             <div className="flex flex-col w-full h-full">
-                {loading ? "로딩중입니다" : <Intro info={introInfo} />}
+                <Intro info={introInfo} />
                 <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
                     <h2 className="text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
                     {
-                        loading ? loadingMsg : contentInfos?.map((obj, index) => {
-                            return (
-                                <Content info={obj} index={index} key={index} id={`content${index}`} />
-                            )
-                        })
+                        loading
+                            ?
+                            <Content info={loadingContent} index={0} id={`contentLoading`} />
+                            :
+                            contentInfos?.map((obj, index) => {
+                                return (
+                                    <Content info={obj} index={index} key={index} id={`content${index}`} />
+                                )
+                            })
                     }
-                    <div onClick={() => loginPage()} className="text-right p-2 md:p-5 md:text-xl text-gray-600">
-                        문의 전화 010-9189-3254
-                    </div>
+
+                    {
+                        isAmend
+                            ?
+                            <ContentForm />
+                            :
+                            <div onClick={() => loginPage()} className="text-right p-2 md:p-5 md:text-xl text-gray-600">
+                                문의 전화 010-9189-3254
+                            </div>
+                    }
                 </div>
             </div>
             <div className="absolute right-0 bottom-0 flex flex-col w-fit m-2">
                 <button id="topButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
                 <button id="upButton" className="hidden w-9 h-9 p-1 rounded-full bg-green-200 hover:bg-green-500 hover:opacity-80 text-white opacity-50">up</button>
+            </div>
+        </div>
+    )
+}
+
+function ContentForm(props) {
+
+    const host = useContext(UrlContext);
+    const [update, setUpdate] = useState(1);
+
+    const [images, setImages] = useState([]);
+    var title = "";
+    var description = "";
+
+    const inputTitle = (event) => {
+        title = event.target.value;
+    }
+
+    const inputDescription = (event) => {
+        description = event.target.value;
+    }
+
+    const readURL = file => {
+        return new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = e => res(e.target.result);
+            reader.onerror = e => rej(e);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const rerender = () => {
+        setUpdate(update ^ 1);
+    }
+
+    const addImages = async (event) => {
+        const files = event.target.files;
+        const fileCount = event.target.files.length;
+        const newImage = [];
+
+        for (var i = 0; i < fileCount; i++) {
+            const url = await readURL(files[i]);
+            // images.push(url);
+            newImage.push(url);
+        }
+        setImages(newImage);
+        rerender();
+    }
+
+    const requestCreateDetail = async () => {
+        const url = `${host}/data/content`;
+        console.log("call", url);
+
+        if (title === "") {
+            alert("제목은 필수로 입력해야합니다.");
+            return;
+        }
+
+        const formData = new FormData(document.getElementById("new_content_form"));
+        formData.append("dto", new Blob([JSON.stringify({
+            title: title,
+            description: description
+        })], { type: "application/json" }));
+
+        fetch(url, {
+            method: 'PUT',
+            body: formData
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+                document.getElementById("new_content_title").value = "";
+                document.getElementById("new_content_description").value = "";
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    return (
+        <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
+            <input id="new_content_title" type="text" placeholder="제목을 입력하세요."
+                className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none"
+                onChange={event => inputTitle(event)}></input>
+
+            <textarea id="new_content_description" placeholder="설명을 입력하세요."
+                className="p-1 md:p-5 text-md w-full outline-none resize-none"
+                onChange={event => inputDescription(event)}></textarea>
+
+            <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-1">
+                {
+                    images.map((src, index) => {
+                        return (
+                            <div className={`hover:p-0 box-content p-2 ${index > 3 ? "hidden" : ""} md:block`} key={index}>
+                                <img className={`rounded-lg border`} src={src} alt=""></img>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+
+            <div className="flex justify-end">
+                <form id="new_content_form" className="bg-green-500 hover:bg-green-600 rounded-lg mx-2 my-3 p-1">
+                    <label htmlFor="new_content_images"
+                        className="text-white">파일 추가</label>
+                    <input id="new_content_images" name="image" type="file" multiple hidden onChange={(event) => addImages(event)}></input>
+                </form>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg mr-5 ml-2 my-3 p-1" onClick={() => requestCreateDetail()}>새로운 홍보글 추가</button>
             </div>
         </div>
     )
@@ -188,29 +317,11 @@ function Intro(props) {
                     <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" onClick={() => requestLogout()}>로그아웃</button>
                 </div>
                 : ""}
-            <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-                id={`${props.id}Modal`} aria-hidden="true">
-                <div className="modal-dialog relative w-auto pointer-events-none">
-                    <div
-                        className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-                        <div
-                            className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
-                            <h5 className="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">알림</h5>
-                            <button type="button"
-                                className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                                data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body relative p-4">
-                            수정하시겠습니까?
-                        </div>
-                        <div
-                            className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
-                            <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-dismiss="modal">닫기</button>
-                            <button className="bg-green-300 hover:bg-green-500 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" onClick={() => requestAmendIntro()}>수정</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            {isAmend
+                ? <Modal id={`${props.id}Modal`} text={`수정하시겠습니까?`} functions={requestAmendIntro}></Modal>
+                : ""
+            }
         </div>
     )
 }
@@ -280,30 +391,46 @@ function Content(props) {
                 : <div className="p-5 text-md w-full outline-none resize-none">{info.description}</div>
             }
             <div className="flex justify-end">
-                {isAmend ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button> : ""}
+                {isAmend
+                    ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
+                    : ""}
                 <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(props.index)}>더보기</button>
             </div>
 
-            <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-                id={`${props.id}Modal`} aria-hidden="true">
-                <div className="modal-dialog relative w-auto pointer-events-none">
+            {isAmend
+                ? <Modal id={`${props.id}Modal`} text={`수정하시겠습니까?`} functions={requestAmendContent}></Modal>
+                : ""
+            }
+        </div>
+    )
+}
+
+function Modal(props) {
+
+    const id = props.id + "modal";
+    const alarm_text = props.text;
+    const functions = props.functions;
+
+    return (
+        <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+            id={id} aria-hidden="true">
+            <div className="modal-dialog relative w-auto pointer-events-none">
+                <div
+                    className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
                     <div
-                        className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-                        <div
-                            className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
-                            <h5 className="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">알림</h5>
-                            <button type="button"
-                                className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                                data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body relative p-4">
-                            수정하시겠습니까?
-                        </div>
-                        <div
-                            className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
-                            <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-dismiss="modal">닫기</button>
-                            <button className="bg-green-500 hover:bg-green-600 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" onClick={() => requestAmendContent()}>수정</button>
-                        </div>
+                        className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+                        <h5 className="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">알림</h5>
+                        <button type="button"
+                            className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body relative p-4">
+                        {alarm_text}
+                    </div>
+                    <div
+                        className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                        <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-dismiss="modal">닫기</button>
+                        <button className="bg-green-500 hover:bg-green-600 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" onClick={() => functions()}>확인</button>
                     </div>
                 </div>
             </div>

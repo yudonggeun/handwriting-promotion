@@ -7,11 +7,6 @@ import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 import UrlContext from "../context/url";
 
-
-//TODO
-/*
-1. pre/back 버튼 이미지 삽입
-*/
 function DetailWrapper(props) {
 
     const host = useContext(UrlContext);
