@@ -6,10 +6,21 @@ import UrlContext from "../context/url";
 
 function ContentWrapper(props) {
 
+    const loadingContent = {
+        id: -1,
+        title: "로딩",
+        description: "로딩",
+        images: []
+    };
+    const loadingIntro = {
+        image: "no_image.png",
+        comments: ["로딩"]
+    }
+
     const host = useContext(UrlContext);
     const contentInfos = useContext(DetailInfoContext);
 
-    const [introInfo, setIntroInfo] = useState(null);
+    const [introInfo, setIntroInfo] = useState(loadingIntro);
     const introInfosURL = `${host}/data/intro`;
     const isAmend = useContext(AmendContext);
     let loading = contentInfos == null || introInfo == null;
@@ -75,29 +86,32 @@ function ContentWrapper(props) {
         }
     }, [loading])
 
-    const loadingMsg = "로딩중입니다.";
-
     return (
         <div className="relative w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
             <div className="flex flex-col w-full h-full">
-                {loading ? "로딩중입니다" : <Intro info={introInfo} />}
+                <Intro info={introInfo} />
                 <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
                     <h2 className="text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
                     {
-                        loading ? loadingMsg : contentInfos?.map((obj, index) => {
-                            return (
-                                <Content info={obj} index={index} key={index} id={`content${index}`} />
-                            )
-                        })
+                        loading
+                            ?
+                            <Content info={loadingContent} index={0} id={`contentLoading`} />
+                            :
+                            contentInfos?.map((obj, index) => {
+                                return (
+                                    <Content info={obj} index={index} key={index} id={`content${index}`} />
+                                )
+                            })
                     }
-                    <div onClick={() => loginPage()} className="text-right p-2 md:p-5 md:text-xl text-gray-600">
-                        문의 전화 010-9189-3254
-                    </div>
+
                     {
                         isAmend
                             ?
-                                <ContentForm></ContentForm>
-                            : ""
+                            <ContentForm />
+                            :
+                            <div onClick={() => loginPage()} className="text-right p-2 md:p-5 md:text-xl text-gray-600">
+                                문의 전화 010-9189-3254
+                            </div>
                     }
                 </div>
             </div>
@@ -112,15 +126,52 @@ function ContentWrapper(props) {
 function ContentForm(props) {
 
     const host = useContext(UrlContext);
+    const [update, setUpdate] = useState(1);
+
+    const [images, setImages] = useState([]);
+    var title = "";
+    var description = "";
+
+    const inputTitle = (event) => {
+        title = event.target.value;
+    }
+
+    const inputDescription = (event) => {
+        description = event.target.value;
+    }
+
+    const readURL = file => {
+        return new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = e => res(e.target.result);
+            reader.onerror = e => rej(e);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const rerender = () => {
+        setUpdate(update ^ 1);
+    }
+
+    const addImages = async (event) => {
+        const files = event.target.files;
+        const fileCount = event.target.files.length;
+        const newImage = [];
+
+        for (var i = 0; i < fileCount; i++) {
+            const url = await readURL(files[i]);
+            // images.push(url);
+            newImage.push(url);
+        }
+        setImages(newImage);
+        rerender();
+    }
 
     const requestCreateDetail = async () => {
         const url = `${host}/data/content`;
         console.log("call", url);
 
-        const title = document.getElementById("new_content_title").value;
-        const description = document.getElementById("new_content_description").value;
-
-        if(title === ""){
+        if (title === "") {
             alert("제목은 필수로 입력해야합니다.");
             return;
         }
@@ -136,8 +187,10 @@ function ContentForm(props) {
             body: formData
         })
             .then((response) => response.json())
-            .then(async (data) => {
+            .then((data) => {
                 console.log('Success:', data);
+                document.getElementById("new_content_title").value = "";
+                document.getElementById("new_content_description").value = "";
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -145,13 +198,35 @@ function ContentForm(props) {
     }
 
     return (
-        <div className="">
-            <input id="new_content_title" type="text">제목</input>
-            <textarea id="new_content_description">설명</textarea>
-            <form id="new_content_form">
-                <input name="image" type="file" multiple></input>
-            </form>
-            <button onClick={() => requestCreateDetail()}>홍보 추가</button>
+        <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
+            <input id="new_content_title" type="text" placeholder="제목을 입력하세요."
+                className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none"
+                onChange={event => inputTitle(event)}></input>
+
+            <textarea id="new_content_description" placeholder="설명을 입력하세요."
+                className="p-1 md:p-5 text-md w-full outline-none resize-none"
+                onChange={event => inputDescription(event)}></textarea>
+
+            <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-1">
+                {
+                    images.map((src, index) => {
+                        return (
+                            <div className={`hover:p-0 box-content p-2 ${index > 3 ? "hidden" : ""} md:block`} key={index}>
+                                <img className={`rounded-lg border`} src={src} alt=""></img>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+
+            <div className="flex justify-end">
+                <form id="new_content_form" className="bg-green-500 hover:bg-green-600 rounded-lg mx-2 my-3 p-1">
+                    <label htmlFor="new_content_images"
+                        className="text-white">파일 추가</label>
+                    <input id="new_content_images" name="image" type="file" multiple hidden onChange={(event) => addImages(event)}></input>
+                </form>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg mr-5 ml-2 my-3 p-1" onClick={() => requestCreateDetail()}>새로운 홍보글 추가</button>
+            </div>
         </div>
     )
 }
