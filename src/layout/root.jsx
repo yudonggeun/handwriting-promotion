@@ -5,6 +5,7 @@ import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 import UrlContext from "../context/url";
+import LoginPage from "./login";
 
 function RootLayout() {
 
@@ -21,24 +22,24 @@ function RootLayout() {
     const [DetailImageSrcArray, setDetailImageSrcArray] = useState(null);
     const [isAmend, setAmend] = useState(false);
 
-    const changeViewDetail = async (index) => {
-        const data = await requestImageSrouces(contentInfos[index].id);
-        setContentIndex(index);
-        setDetailImageSrcArray(data);
+    //pageName : ["main", 메인 화면] ["detail", 작품 페이지] ["login", 로그인 페이지]
+    const changeView = async (index, pageName) => {
 
-        setPageInfo({
-            page: "detail",
-            id: contentInfos[index]
-        })
-    }
-
-    const changeViewHome = () => {
-        setPageInfo({
-            page: "main",
+        const pageInfoBox = {
+            page: pageName,
             id: null
-        })
-    }
+        };
 
+        if (pageName === "detail") {
+            const data = await requestImageSrouces(contentInfos[index].id);
+            setContentIndex(index);
+            setDetailImageSrcArray(data);
+            pageInfoBox.id = contentInfos[index];
+        }
+
+        setPageInfo(pageInfoBox);
+    }
+    
     const requestAmend = () => {
         fetch(amendURL)
             .then((response) => response.json())
@@ -91,17 +92,22 @@ function RootLayout() {
                             pageInfo.page === "main"
                                 ?
                                 <div id="content_wrapper" className="h-full w-full">
-                                    <PageContext.Provider value={changeViewDetail}>
+                                    <PageContext.Provider value={changeView}>
                                         <ContentWrapper />
                                     </PageContext.Provider>
                                 </div>
-                                :
-                                <div id="detail_wrapper" className="h-full w-full">
-                                    <PageContext.Provider value={changeViewHome}>
+                                : ""
+                        }
+                        {
+                            pageInfo.page === "detail"
+                                ? <div id="detail_wrapper" className="h-full w-full">
+                                    <PageContext.Provider value={changeView}>
                                         <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} />
                                     </PageContext.Provider>
                                 </div>
+                                : ""
                         }
+                        {pageInfo.page === "login" ? <LoginPage /> : ""}
                     </DetailInfoContext.Provider>
                 </AmendContext.Provider>
             </UrlContext.Provider>
