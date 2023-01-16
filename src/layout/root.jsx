@@ -39,7 +39,7 @@ function RootLayout() {
 
         setPageInfo(pageInfoBox);
     }
-    
+
     const requestAmend = () => {
         fetch(amendURL)
             .then((response) => response.json())
@@ -86,29 +86,27 @@ function RootLayout() {
         <div id="service_root" className="w-screen h-screen overflow-hidden">
             <UrlContext.Provider value={host}>
                 <AmendContext.Provider value={isAmend}>
+                    <PageContext.Provider value={changeView}>
 
-                    <DetailInfoContext.Provider value={contentInfos}>
-                        {
-                            pageInfo.page === "main"
-                                ?
-                                <div id="content_wrapper" className="h-full w-full">
-                                    <PageContext.Provider value={changeView}>
+                        <DetailInfoContext.Provider value={contentInfos}>
+                            {
+                                pageInfo.page === "main"
+                                    ?
+                                    <div id="content_wrapper" className="h-full w-full">
                                         <ContentWrapper />
-                                    </PageContext.Provider>
-                                </div>
-                                : ""
-                        }
-                        {
-                            pageInfo.page === "detail"
-                                ? <div id="detail_wrapper" className="h-full w-full">
-                                    <PageContext.Provider value={changeView}>
+                                    </div>
+                                    : ""
+                            }
+                            {
+                                pageInfo.page === "detail"
+                                    ? <div id="detail_wrapper" className="h-full w-full">
                                         <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} />
-                                    </PageContext.Provider>
-                                </div>
-                                : ""
-                        }
-                        {pageInfo.page === "login" ? <LoginPage /> : ""}
-                    </DetailInfoContext.Provider>
+                                    </div>
+                                    : ""
+                            }
+                            {pageInfo.page === "login" ? <LoginPage /> : ""}
+                        </DetailInfoContext.Provider>
+                    </PageContext.Provider>
                 </AmendContext.Provider>
             </UrlContext.Provider>
         </div>
