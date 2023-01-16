@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
+import PageContext from "../context/page_context";
+import UrlContext from "../context/url";
 
 function LoginPage(props) {
 
-    const url = `${window.location.protocol}//${window.location.host}/api/admin/login`;
+    const host = useContext(UrlContext);
+    const url = `${host}/admin/login`;
+    const changeView = useContext(PageContext);
 
     const requestLogin = () => {
 
@@ -22,12 +26,12 @@ function LoginPage(props) {
             .then((response) => response.json())
             .then((data) => {
                 console.log('Success:', data);
+                changeView(null, "main");
             })
             .catch((error) => {
                 console.error('Error:', error);
+                alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.")
             });
-
-        alert();
     }
 
     return (
@@ -50,10 +54,19 @@ function LoginPage(props) {
                         className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                         id="loginPw" placeholder="Password" />
                 </div>
-                <form action="/" onSubmit={requestLogin}>
+                <form>
                     <div className="text-center pt-1 mb-12 pb-1">
-                        <button className="bg-gradient-to-r from-green-500 to-blue-50 w-full rounded-md shadow-md uppercase py-1 text-white" typeof="submit">
+                        <button
+                            className="mb-2 bg-gradient-to-r from-green-500 to-blue-50 w-full rounded-md shadow-md uppercase py-1 text-white"
+                            typeof="button"
+                            onClick={() => requestLogin()}>
                             Log in
+                        </button>
+                        <button
+                            className="bg-gradient-to-r from-pink-300 to-red-50 w-full rounded-md shadow-md uppercase py-1 text-white"
+                            typeof="button"
+                            onClick={() => changeView(null, "main")}>
+                            back to main
                         </button>
                     </div>
                 </form>

@@ -394,7 +394,7 @@ function Content(props) {
                 {isAmend
                     ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
                     : ""}
-                <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(props.index)}>더보기</button>
+                <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(props.index, "detail")}>더보기</button>
             </div>
 
             {isAmend
