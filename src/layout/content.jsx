@@ -3,6 +3,7 @@ import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 import UrlContext from "../context/url";
+import Modal from "../component/modal";
 
 function ContentWrapper(props) {
 
@@ -23,7 +24,7 @@ function ContentWrapper(props) {
 
     const [introInfo, setIntroInfo] = useState(loadingIntro);
     const introInfosURL = `${host}/data/intro`;
-    const isAmend = useContext(AmendContext);
+    const [isAmend, setAmend] = useContext(AmendContext);
     let loading = contentInfos == null || introInfo == null;
 
     const requestIntroInfos = () => {
@@ -186,6 +187,9 @@ function ContentForm(props) {
 
         fetch(url, {
             method: 'PUT',
+            headers: {
+                Authorization: localStorage.getItem("access-token")
+            },
             body: formData
         })
             .then((response) => response.json())
@@ -240,7 +244,7 @@ function Intro(props) {
     let amend_file;
 
     const [reload, setReload] = useState(false);
-    const isAmend = useContext(AmendContext);
+    const [isAmend, setAmend] = useContext(AmendContext);
     const url = `${host}/data/intro`;
 
     const requestAmendIntro = () => {
@@ -252,6 +256,9 @@ function Intro(props) {
 
         fetch(url, {
             method: 'POST',
+            headers: {
+                Authorization: localStorage.getItem("access-token")
+            },
             body: formData
         })
             .then((response) => response.json())
@@ -264,8 +271,8 @@ function Intro(props) {
     }
 
     async function requestLogout() {
-        await fetch(`${host}/admin/logout`)
-            .then(() => setReload(!reload));
+        setAmend(false);
+        localStorage.removeItem("access-token");
     }
 
     const changeInfoComment = (event) => {
@@ -331,7 +338,7 @@ function Intro(props) {
 function Content(props) {
 
     const [info, setInfo] = useState(props.info);
-    const isAmend = useContext(AmendContext);
+    const [isAmend, setAmend] = useContext(AmendContext);
     const changeView = useContext(PageContext);
 
     const id = info.id;
@@ -346,6 +353,7 @@ function Content(props) {
         fetch(url, {
             method: 'POST',
             headers: {
+                Authorization: localStorage.getItem("access-token"),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -394,7 +402,7 @@ function Content(props) {
             }
             <div className="flex justify-end">
                 {isAmend
-                    ? <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
+                    ? <button className="bg-red-400 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
                     : ""}
                 <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(props.index, "detail")}>더보기</button>
             </div>
@@ -403,39 +411,6 @@ function Content(props) {
                 ? <Modal id={`${props.id}Modal`} text={`수정하시겠습니까?`} functions={requestAmendContent}></Modal>
                 : ""
             }
-        </div>
-    )
-}
-
-function Modal(props) {
-
-    const id = props.id + "modal";
-    const alarm_text = props.text;
-    const functions = props.functions;
-
-    return (
-        <div className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-            id={id} aria-hidden="true">
-            <div className="modal-dialog relative w-auto pointer-events-none">
-                <div
-                    className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-                    <div
-                        className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
-                        <h5 className="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">알림</h5>
-                        <button type="button"
-                            className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body relative p-4">
-                        {alarm_text}
-                    </div>
-                    <div
-                        className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
-                        <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" data-bs-dismiss="modal">닫기</button>
-                        <button className="bg-green-500 hover:bg-green-600 text-white rounded-lg my-3 p-1" data-bs-dismiss="modal" onClick={() => functions()}>확인</button>
-                    </div>
-                </div>
-            </div>
         </div>
     )
 }

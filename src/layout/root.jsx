@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ContentWrapper from "../component/content";
-import DetailWrapper from "../component/detail_image";
+import ContentWrapper from "./content";
+import DetailWrapper from "./detail";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
@@ -9,7 +9,7 @@ import LoginPage from "./login";
 
 function RootLayout() {
 
-    const host = `${window.location.protocol}//${window.location.host}/api`;
+    const host = window.location.origin;
     const contentInfosURL = `${host}/data/content`;
     const amendURL = `${host}/admin/isAmend`;
 
@@ -41,7 +41,11 @@ function RootLayout() {
     }
 
     const requestAmend = () => {
-        fetch(amendURL)
+        fetch(amendURL, {
+            headers: {
+                Authorization: localStorage.getItem("access-token")
+            }
+        })
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === true) {
@@ -85,7 +89,7 @@ function RootLayout() {
     return (
         <div id="service_root" className="w-screen h-screen overflow-hidden">
             <UrlContext.Provider value={host}>
-                <AmendContext.Provider value={isAmend}>
+                <AmendContext.Provider value={[isAmend, setAmend]}>
                     <PageContext.Provider value={changeView}>
 
                         <DetailInfoContext.Provider value={contentInfos}>
@@ -104,7 +108,7 @@ function RootLayout() {
                                     </div>
                                     : ""
                             }
-                            {pageInfo.page === "login" ? <LoginPage /> : ""}
+                            {pageInfo.page === "login" ? <LoginPage setAmend={setAmend}/> : ""}
                         </DetailInfoContext.Provider>
                     </PageContext.Provider>
                 </AmendContext.Provider>

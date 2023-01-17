@@ -12,7 +12,7 @@ function DetailWrapper(props) {
     const host = useContext(UrlContext);
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
-    const isAmend = useContext(AmendContext);
+    const [isAmend, setAmend] = useContext(AmendContext);
     const [imgList, setImageList] = useState(props.imgSrcs);
 
     const deleteImageSet = new Set();
@@ -45,6 +45,9 @@ function DetailWrapper(props) {
 
         fetch(url, {
             method: 'PUT',
+            headers: {
+                Authorization: localStorage.getItem("access-token")
+            },
             body: formData
         })
             .then((response) => response.json())
@@ -65,6 +68,7 @@ function DetailWrapper(props) {
         fetch(url, {
             method: 'DELETE',
             headers: {
+                Authorization: localStorage.getItem("access-token"),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -142,7 +146,7 @@ function DetailWrapper(props) {
 function ImageComponent(props) {
 
     const deleteImageSet = props.deleteImageSet;
-    const isAmend = useContext(AmendContext);
+    const [isAmend, setAmend] = useContext(AmendContext);
 
     const clickImageAtList = (event) => {
         const src = event.target.src;
