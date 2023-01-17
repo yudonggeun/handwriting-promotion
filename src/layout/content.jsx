@@ -13,30 +13,13 @@ function ContentWrapper(props) {
         description: "로딩",
         images: []
     };
-    const loadingIntro = {
-        image: "no_image.png",
-        comments: ["로딩"]
-    }
 
-    const host = useContext(UrlContext);
     const contentInfos = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
 
-    const [introInfo, setIntroInfo] = useState(loadingIntro);
-    const introInfosURL = `${host}/data/intro`;
+    const introInfo = props.introInfo;
     const [isAmend, setAmend] = useContext(AmendContext);
     let loading = contentInfos == null || introInfo == null;
-
-    const requestIntroInfos = () => {
-        fetch(introInfosURL)
-            .then((response) => response.json())
-            .then((data) => {
-                setIntroInfo(data);
-            }).catch((e) => {
-                console.log(e);
-                alert("오류 발생");
-            });
-    }
 
     let count = 0;
     const loginPage = () => {
@@ -46,9 +29,6 @@ function ContentWrapper(props) {
             changeView(null, "login");
         }
     }
-    useEffect(() => {
-        requestIntroInfos();
-    }, []);
 
     useEffect(() => {
         // Get the button
