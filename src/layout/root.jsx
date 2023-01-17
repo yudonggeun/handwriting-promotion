@@ -9,7 +9,8 @@ import LoginPage from "./login";
 
 function RootLayout() {
 
-    const host = window.location.origin;
+    const host = `${window.location.protocol}//${window.location.host}/api`;//docker deploy default url
+    // const host = window.location.origin;
     const contentInfosURL = `${host}/data/content`;
     const amendURL = `${host}/admin/isAmend`;
 
