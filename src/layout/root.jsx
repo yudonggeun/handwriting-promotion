@@ -9,15 +9,19 @@ import LoginPage from "./login";
 
 function RootLayout() {
 
+    const loadingIntro = {
+        image: "no_image.png",
+        comments: ["로딩"]
+    }
+
     const host = `${window.location.protocol}//${window.location.host}/api`;//docker deploy default url
-    // const host = window.location.origin;
+    // const host = window.location.origin;//local dev test url
     const contentInfosURL = `${host}/data/content`;
     const amendURL = `${host}/admin/isAmend`;
+    const introInfosURL = `${host}/data/intro`;
 
-    const [pageInfo, setPageInfo] = useState({
-        page: "main",
-        id: null
-    })
+    const [pageInfo, setPageInfo] = useState({ page: "main", id: null });
+    const [introInfo, setIntroInfo] = useState(loadingIntro);
     const [contentInfos, setContentInfos] = useState(null);
     const [contentIndex, setContentIndex] = useState(0);
     const [DetailImageSrcArray, setDetailImageSrcArray] = useState(null);
@@ -82,9 +86,22 @@ function RootLayout() {
             });
     }
 
+    const requestIntroInfos = () => {
+        console.log("intro info get");
+        fetch(introInfosURL)
+            .then((response) => response.json())
+            .then((data) => {
+                setIntroInfo(data);
+            }).catch((e) => {
+                console.log(e);
+                alert("오류 발생");
+            });
+    }
+
     useEffect(() => {
         requestContentInfos();
         requestAmend();
+        requestIntroInfos();
     }, []);
 
     return (
@@ -92,24 +109,10 @@ function RootLayout() {
             <UrlContext.Provider value={host}>
                 <AmendContext.Provider value={[isAmend, setAmend]}>
                     <PageContext.Provider value={changeView}>
-
                         <DetailInfoContext.Provider value={contentInfos}>
-                            {
-                                pageInfo.page === "main"
-                                    ?
-                                    <div id="content_wrapper" className="h-full w-full">
-                                        <ContentWrapper />
-                                    </div>
-                                    : ""
-                            }
-                            {
-                                pageInfo.page === "detail"
-                                    ? <div id="detail_wrapper" className="h-full w-full">
-                                        <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} />
-                                    </div>
-                                    : ""
-                            }
-                            {pageInfo.page === "login" ? <LoginPage setAmend={setAmend}/> : ""}
+                            {pageInfo.page === "main" ? <ContentWrapper introInfo={introInfo} /> : ""}
+                            {pageInfo.page === "detail" ? <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} /> : ""}
+                            {pageInfo.page === "login" ? <LoginPage setAmend={setAmend} /> : ""}
                         </DetailInfoContext.Provider>
                     </PageContext.Provider>
                 </AmendContext.Provider>
