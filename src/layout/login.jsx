@@ -54,10 +54,10 @@ function LoginPage(props) {
     }
 
     return (
-        <div className="p-20 bg-gray-200 h-screen">
-            <div className="border p-5 rounded-md shadow-md bg-white">
+        <div className="p-5 md:p-10 lg:p-20 bg-gray-200 h-full">
+            <div className="border p-5 m-auto rounded-md shadow-md bg-white">
                 <div className="text-center">
-                    <h4 className="text-xl font-semibold mt-1 mb-12 pb-1">로그인</h4>
+                    <h4 className="text-xl font-semibold mt-1 mb- pb-1">로그인</h4>
                 </div>
                 <div className="mb-4">
                     <input
@@ -84,7 +84,7 @@ function LoginPage(props) {
                         className="bg-gradient-to-r from-pink-300 to-red-50 w-full rounded-md shadow-md uppercase py-1 text-white"
                         typeof="button"
                         onClick={() => changeView(null, "main")}>
-                        back to main
+                        HOME
                     </button>
                 </div>
             </div>

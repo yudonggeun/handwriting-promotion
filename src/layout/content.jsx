@@ -352,6 +352,28 @@ function Content(props) {
             });
     }
 
+    const requestDeleteContent = () => {
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                Authorization: localStorage.getItem("access-token"),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: id,
+                title: title,
+                description: description
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('삭제했습니다. :', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
     function changeTitle(event) {
         const obj = event.target;
         title = obj.value;
@@ -381,16 +403,13 @@ function Content(props) {
                 : <div className="p-5 text-md w-full outline-none resize-none">{info.description}</div>
             }
             <div className="flex justify-end">
-                {isAmend
-                    ? <button className="bg-red-400 hover:bg-red-600 text-white rounded-lg mx-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
-                    : ""}
+                {isAmend ? <button className="bg-gray-400 hover:bg-gray-700 text-white rounded-lg ml-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}DeleteModal`}>삭제하기</button> : ""}
+                {isAmend ? <button className="bg-red-400 hover:bg-red-600 text-white rounded-lg ml-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}ModifyModal`}>수정하기</button> : ""}
                 <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => changeView(props.index, "detail")}>더보기</button>
             </div>
 
-            {isAmend
-                ? <Modal id={`${props.id}Modal`} text={`수정하시겠습니까?`} functions={requestAmendContent}></Modal>
-                : ""
-            }
+            {isAmend ? <Modal id={`${props.id}DeleteModal`} text={`삭제하시겠습니까?`} functions={requestDeleteContent}></Modal> : ""}
+            {isAmend ? <Modal id={`${props.id}ModifyModal`} text={`수정하시겠습니까?`} functions={requestAmendContent}></Modal> : ""}
         </div>
     )
 }
