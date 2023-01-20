@@ -34,14 +34,31 @@ function RootLayout() {
             id: null
         };
 
+        const mainLayout = document.getElementById("mainPage");
+        const detailLayout = document.getElementById("detailLayout");
+
+        if (pageName === "main") {
+            if(!mainLayout){
+                setPageInfo(pageInfoBox);
+                return;
+            }
+            detailLayout.hidden = true;
+            mainLayout.hidden = false;
+        }
+
         if (pageName === "detail") {
             const data = await requestImageSrouces(contentInfos[index].id);
             setContentIndex(index);
+            console.log("detail image data", data);
             setDetailImageSrcArray(data);
             pageInfoBox.id = contentInfos[index];
+            mainLayout.hidden = true;
+            detailLayout.hidden = false;
         }
 
-        setPageInfo(pageInfoBox);
+        if (pageName === "login") {
+            setPageInfo(pageInfoBox);
+        }
     }
 
     const requestAmend = () => {
@@ -108,9 +125,12 @@ function RootLayout() {
             <UrlContext.Provider value={host}>
                 <AmendContext.Provider value={[isAmend, setAmend]}>
                     <PageContext.Provider value={changeView}>
-                        <DetailInfoContext.Provider value={contentInfos}>
-                            {pageInfo.page === "main" ? <ContentWrapper introInfo={introInfo} /> : ""}
-                            {pageInfo.page === "detail" ? <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} /> : ""}
+                        <DetailInfoContext.Provider value={DetailImageSrcArray}>
+                            {pageInfo.page !== "login" ?
+                                <div className="w-full h-full">
+                                    <ContentWrapper introInfo={introInfo} contentInfos={contentInfos} />
+                                    <DetailWrapper imgSrcs={DetailImageSrcArray} contentInfos={contentInfos} index={contentIndex} />
+                                </div> : ""}
                             {pageInfo.page === "login" ? <LoginPage setAmend={setAmend} /> : ""}
                         </DetailInfoContext.Provider>
                     </PageContext.Provider>

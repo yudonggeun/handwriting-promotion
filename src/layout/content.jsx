@@ -14,7 +14,8 @@ function ContentWrapper(props) {
         images: []
     };
 
-    const contentInfos = useContext(DetailInfoContext);
+    // const contentInfos = useContext(DetailInfoContext);
+    const contentInfos = props.contentInfos;
     const changeView = useContext(PageContext);
 
     const introInfo = props.introInfo;
@@ -70,7 +71,7 @@ function ContentWrapper(props) {
     }, [loading])
 
     return (
-        <div className="relative w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
+        <div id="mainPage" className="relative w-full h-full bg-gradient-to-b from-green-100 to-white overflow-y-auto scrollbar-hide" >
             <div className="flex flex-col w-full h-full">
                 <Intro info={introInfo} />
                 <div id="contentArea" className="lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
@@ -143,7 +144,6 @@ function ContentForm(props) {
 
         for (var i = 0; i < fileCount; i++) {
             const url = await readURL(files[i]);
-            // images.push(url);
             newImage.push(url);
         }
         setImages(newImage);
@@ -195,6 +195,7 @@ function ContentForm(props) {
 
             <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-1">
                 {
+                    images ?
                     images.map((src, index) => {
                         return (
                             <div className={`hover:p-0 box-content p-2 ${index > 3 ? "hidden" : ""} md:block`} key={index}>
@@ -202,6 +203,7 @@ function ContentForm(props) {
                             </div>
                         )
                     })
+                    : ""
                 }
             </div>
 
@@ -386,7 +388,7 @@ function Content(props) {
 
     return (
         <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
-            <input type="text" onChange={(event) => changeTitle(event)} readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title}></input>
+            <input type="text" onChange={(event) => changeTitle(event)} readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title} placeholder="무슨 제목을 쓸까요?"></input>
             <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-1">
                 {
                     info.images.map((src, index) => {
@@ -399,7 +401,7 @@ function Content(props) {
                 }
             </div>
             {isAmend
-                ? <textarea className="p-1 md:p-5 text-md w-full outline-none resize-none" onChange={(event) => changeDescription(event)} readOnly={!isAmend} defaultValue={info.description}></textarea>
+                ? <textarea className="p-1 md:p-5 text-md w-full outline-none resize-none" onChange={(event) => changeDescription(event)} readOnly={!isAmend} defaultValue={info.description} placeholder="설명이 비었네요?? 설명을 써주세요!"></textarea>
                 : <div className="p-5 text-md w-full outline-none resize-none">{info.description}</div>
             }
             <div className="flex justify-end">
