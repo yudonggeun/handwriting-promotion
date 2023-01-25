@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import ContentWrapper from "./content";
 import DetailWrapper from "./detail";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 import UrlContext from "../context/url";
 import LoginPage from "./login";
+import MainLayout from "./main";
 
 function RootLayout() {
 
@@ -23,26 +23,50 @@ function RootLayout() {
     const [pageInfo, setPageInfo] = useState({ page: "main", id: null });
     const [introInfo, setIntroInfo] = useState(loadingIntro);
     const [contentInfos, setContentInfos] = useState(null);
-    const [contentIndex, setContentIndex] = useState(0);
+    const [contentDetailInfo, setContentDetailInfo] = useState({
+        id: -1,
+        title: "로딩",
+        description: "로딩",
+        images: []
+    })
     const [DetailImageSrcArray, setDetailImageSrcArray] = useState(null);
     const [isAmend, setAmend] = useState(false);
 
     //pageName : ["main", 메인 화면] ["detail", 작품 페이지] ["login", 로그인 페이지]
-    const changeView = async (index, pageName) => {
+    const changeView = async (obj, pageName) => {
 
         const pageInfoBox = {
             page: pageName,
             id: null
         };
 
-        if (pageName === "detail") {
-            const data = await requestImageSrouces(contentInfos[index].id);
-            setContentIndex(index);
-            setDetailImageSrcArray(data);
-            pageInfoBox.id = contentInfos[index];
+        const mainLayout = document.getElementById("mainPage");
+        const detailLayout = document.getElementById("detailLayout");
+
+        if (pageName === "main") {
+            if (!mainLayout) {
+                setPageInfo(pageInfoBox);
+                return;
+            }
+            detailLayout.hidden = true;
+            mainLayout.hidden = false;
         }
 
-        setPageInfo(pageInfoBox);
+        if (pageName === "detail") {
+            const imageList = await requestImageSrouces(obj.id);
+            obj.images = imageList;
+            console.log("detail imageList", imageList);
+            console.log("obj : ", obj)
+            setContentDetailInfo(obj);
+            setDetailImageSrcArray(imageList);
+            pageInfoBox.id = obj.id;
+            mainLayout.hidden = true;
+            detailLayout.hidden = false;
+        }
+
+        if (pageName === "login") {
+            setPageInfo(pageInfoBox);
+        }
     }
 
     const requestAmend = () => {
@@ -109,9 +133,12 @@ function RootLayout() {
             <UrlContext.Provider value={host}>
                 <AmendContext.Provider value={[isAmend, setAmend]}>
                     <PageContext.Provider value={changeView}>
-                        <DetailInfoContext.Provider value={contentInfos}>
-                            {pageInfo.page === "main" ? <ContentWrapper introInfo={introInfo} /> : ""}
-                            {pageInfo.page === "detail" ? <DetailWrapper imgSrcs={DetailImageSrcArray} index={contentIndex} /> : ""}
+                        <DetailInfoContext.Provider value={contentDetailInfo}>
+                            {pageInfo.page !== "login" ?
+                                <div className="w-full h-full">
+                                    <MainLayout introInfo={introInfo} contentInfos={contentInfos} setContentInfos={setContentInfos} />
+                                    <DetailWrapper id={pageInfo.id} />
+                                </div> : ""}
                             {pageInfo.page === "login" ? <LoginPage setAmend={setAmend} /> : ""}
                         </DetailInfoContext.Provider>
                     </PageContext.Provider>
