@@ -10,23 +10,24 @@ import UrlContext from "../context/url";
 function DetailWrapper(props) {
 
     const host = useContext(UrlContext);
-    // const contentInfo = useContext(DetailInfoContext);
-    const contentInfo = props.contentInfos;
-    // const contentInfo = useContext(DetailInfoContext);
+    const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
     const [isAmend, setAmend] = useContext(AmendContext);
-    const contentImageList = useContext(DetailInfoContext);
-    const [imgList, setImageList] = useState(contentImageList);
+    const [imgList, setImageList] = useState(contentInfo.images);
 
     const deleteImageSet = new Set();
-
-    let loading = props.contentInfos == null;
 
     useEffect(() => {
         //init
         const image_viewer = document.getElementById("detail_image_view");
         image_viewer.src = ``;
+        setImageList(contentInfo.images);
     })
+
+    const changeImageList = (array) => {
+        contentInfo.images = array;
+        setImageList([]);
+    }
 
     const requestImageSrouces = async (id) => {
         const contentImageURL = `${host}/data/content/image`;
@@ -41,7 +42,7 @@ function DetailWrapper(props) {
     }
 
     const requestAddDetailImage = async () => {
-        const url = `${host}/data/detail/${contentInfo[props.index].id}`;
+        const url = `${host}/data/detail/${contentInfo.id}`;
         const formData = new FormData(document.getElementById("detail_form"));
 
         console.log("call", url);
@@ -56,8 +57,9 @@ function DetailWrapper(props) {
             .then((response) => response.json())
             .then(async (data) => {
                 console.log('Success:', data);
-                const newImgList = await requestImageSrouces(contentInfo[props.index].id);
-                setImageList(newImgList);
+                const newImgList = await requestImageSrouces(contentInfo.id);
+                console.log(newImgList);
+                changeImageList(newImgList);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -65,7 +67,7 @@ function DetailWrapper(props) {
     }
 
     const requestDeleteImage = () => {
-        const url = `${host}/data/detail/${contentInfo[props.index].id}`;
+        const url = `${host}/data/detail/${contentInfo.id}`;
         console.log("call", url);
 
         fetch(url, {
@@ -81,8 +83,8 @@ function DetailWrapper(props) {
             .then((response) => response.json())
             .then(async (data) => {
                 console.log('Success:', data);
-                const newImgList = await requestImageSrouces(contentInfo[props.index].id);
-                setImageList(newImgList);
+                const newImgList = await requestImageSrouces(contentInfo.id);
+                changeImageList(newImgList);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -97,21 +99,20 @@ function DetailWrapper(props) {
 
     return (
         <div id="detailLayout" className="relative flex flex-col w-full h-full" hidden={true}>
-            <div className="flex-1 grid grid-cols-1 overflow-auto  
+            <div className="flex-1 grid grid-cols-1 grid-cols-2 overflow-auto  
                             md:flex md:mt-10">
 
-                <div className="md:w-6/12 lg:w-5/12 xl:4/12 2xl:3/12 h-fit
+                <div className="md:w-6/12 lg:w-5/12 xl:4/12 2xl:3/12 
                                 md:order-last md:p-5
-                                grid place-content-stretch                                
-                                overflow-auto" >
+                                overflow-auto">
                     {/* sample image viewer */}
-                    <div id="detail_image_wapper" className="bg-white grid gap-5 justify-center content-start rounded-lg shadow-lg border py-5" hidden={true}>
-                        <img id="detail_image_view" src="" alt=""></img>
+                    <div id="detail_image_wapper" className="h-fit bg-white grid gap-5 justify-center content-start rounded-lg shadow-lg border py-5" hidden={true}>
+                        <img id="detail_image_view" className="h-full object-contain" src="" alt=""></img>
                     </div>
                 </div>
                 <form
                     id="imageListView"
-                    className="grid content-start grid-cols-3 
+                    className="grid content-start grid-cols-3 grid-rows-3
                                 md:flex-1 md:flex md:flex-wrap md:p-5 md:gap-5
                                 overflow-auto scrollbar-hide
                                 ">
@@ -119,7 +120,7 @@ function DetailWrapper(props) {
                         imgList ?
                             imgList.map((src, index) => {
                                 return (
-                                    <ImageComponent key={index} src={src} deleteImageSet={deleteImageSet} />
+                                    <ImageComponent key={src} src={src} deleteImageSet={deleteImageSet} />
                                 )
                             })
                             : "loading"
@@ -131,7 +132,7 @@ function DetailWrapper(props) {
             <div className="absolute bottom-0 w-full flex rounded-t-lg border bg-blue-100 p-3
                             md:order-first md:rounded-none md:top-0 md:bottom-auto">
                 {/* <button>pre</button> */}
-                <nav className="flex-1 text-center">{loading ? "loading" : contentInfo[props.index].title}</nav>
+                <nav className="flex-1 text-center">{contentInfo.title}</nav>
                 {/* <button>back</button> */}
             </div>
 
@@ -178,9 +179,9 @@ function ImageComponent(props) {
                         md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
                         hover:shadow-2xl hover:bg-gray-200 ">
             {
-                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src} onClick={() => clickCheckBox()}></input> : ""
+                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src} onClick={(event) => clickCheckBox(event)}></input> : ""
             }
-            <img className="w-20 h-full md:rounded-lg border border-0 object-fill" src={props.src} onClick={(event) => clickImageAtList(event)} alt=""></img>
+            <img className="h-full w-full md:rounded-lg border border-0 object-contain" src={props.src} onClick={(event) => clickImageAtList(event)} alt=""></img>
         </div>
     )
 }
