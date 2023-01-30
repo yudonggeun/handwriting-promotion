@@ -9,18 +9,13 @@ import MainLayout from "./main";
 
 function RootLayout() {
 
-    const loadingIntro = {
-        image: "no_image.png",
-        comments: ["로딩"]
-    }
-
     const host = window.location.origin;
     const contentInfosURL = `${host}/data/content`;
     const amendURL = `${host}/admin/isAmend`;
     const introInfosURL = `${host}/data/intro`;
 
     const [pageInfo, setPageInfo] = useState({ page: "main", id: null });
-    const [introInfo, setIntroInfo] = useState(loadingIntro);
+    const [introInfo, setIntroInfo] = useState(null);
     const [contentInfos, setContentInfos] = useState(null);
     const [contentDetailInfo, setContentDetailInfo] = useState({
         id: -1,
@@ -28,7 +23,6 @@ function RootLayout() {
         description: "로딩",
         images: []
     })
-    const [DetailImageSrcArray, setDetailImageSrcArray] = useState(null);
     const [isAmend, setAmend] = useState(false);
 
     //pageName : ["main", 메인 화면] ["detail", 작품 페이지] ["login", 로그인 페이지]
@@ -57,7 +51,6 @@ function RootLayout() {
             console.log("detail imageList", imageList);
             console.log("obj : ", obj)
             setContentDetailInfo(obj);
-            setDetailImageSrcArray(imageList);
             pageInfoBox.id = obj.id;
             mainLayout.hidden = true;
             detailLayout.hidden = false;
