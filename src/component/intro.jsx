@@ -78,7 +78,7 @@ function Intro(props) {
                         return (
                             isAmend
                                 ? <textarea name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" onChange={(event) => changeInfoComment(event)} data-index={index} readOnly={!isAmend} key={index} defaultValue={comment}></textarea>
-                                : <div name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" data-index={index} key={index} >{comment}</div>
+                                : <div name="comments" className="mb-1 w-full bg-transparent outline-none resize-none text-sm lg:text-base font-medium text-gray-900" data-index={index} key={index} >{comment}</div>
                         )
                     })
                 }

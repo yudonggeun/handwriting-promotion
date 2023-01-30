@@ -80,8 +80,8 @@ function MainLayout(props) {
                     :
                     <div className="flex flex-col w-full h-full">
                         <Intro info={introInfo} />
-                        <div id="contentArea" ref={contentWrapper} className="flex flex-col lg:snap-y lg:snap-mandatory md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
-                            <h2 className="text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
+                        <div id="contentArea" ref={contentWrapper} className="flex flex-col md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
+                            <h2 className="text-gray-800 font-medium text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
                             {contentInfos?.map((obj, index) => {
                                 return (<Content info={obj} index={index} key={obj.id} id={`content${index}`} deleteContent={deleteContent} />)
                             })}

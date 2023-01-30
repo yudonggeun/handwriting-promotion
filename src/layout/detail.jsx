@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useRef } from "react";
 import { useContext } from "react";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
@@ -15,11 +16,14 @@ function DetailWrapper(props) {
     const [isAmend, setAmend] = useContext(AmendContext);
     const [imgList, setImageList] = useState(contentInfo.images);
 
+    const imageView = useRef();
+    const imageWapper = useRef();
+
     const deleteImageSet = new Set();
 
     useEffect(() => {
         //init
-        const image_viewer = document.getElementById("detail_image_view");
+        const image_viewer = imageView.current;
         image_viewer.src = ``;
         setImageList(contentInfo.images);
     })
@@ -92,8 +96,8 @@ function DetailWrapper(props) {
     }
 
     const clickBackButton = () => {
-        const detail_image_wapper = document.getElementById("detail_image_wapper");
-        detail_image_wapper.hidden = true;
+        imageWapper.current.hidden = true;
+        imageView.current.hidden = true;        
         changeView(null, "main")
     }
 
@@ -102,13 +106,21 @@ function DetailWrapper(props) {
             <div className="flex-1 grid grid-cols-1 grid-cols-2 overflow-auto  
                             md:flex md:mt-10">
 
-                <div className="md:w-6/12 lg:w-5/12 xl:4/12 2xl:3/12 
-                                md:order-last md:p-5
-                                overflow-auto">
+                <div ref={imageWapper} hidden={true} className="md:w-6/12 lg:w-5/12 xl:4/12 2xl:3/12 
+                                md:order-last md:p-5 md:py-[40px] md:px-[32px]
+                                overflow-hidden
+                                flex justify-center
+                                ">
                     {/* sample image viewer */}
-                    <div id="detail_image_wapper" className="h-fit bg-white grid gap-5 justify-center content-start rounded-lg shadow-lg border py-5" hidden={true}>
-                        <img id="detail_image_view" className="h-full object-contain" src="" alt=""></img>
-                    </div>
+                    <img ref={imageView}
+                        className="h-fit max-h-full 
+                                   object-contain
+                                   rounded-md md:shadow-2xl
+                                   md:border md:ring-0 md:ring-offset-[29px] md:ring-black md:border-gray-900
+                                   " src="" alt="" hidden={true}></img>
+                    {/* <div className="max-h-full bg-white grid gap-5 justify-center rounded-md md:shadow-lg md:border py-5 md:px-5">
+                        <img ref={imageView} className="max-h-full object-contain md:border" src="" alt=""></img>
+                    </div> */}
                 </div>
                 <form
                     id="imageListView"
@@ -120,7 +132,7 @@ function DetailWrapper(props) {
                         imgList ?
                             imgList.map((src, index) => {
                                 return (
-                                    <ImageComponent key={src} src={src} deleteImageSet={deleteImageSet} />
+                                    <ImageComponent key={src} src={src} wapper={imageWapper.current} element={imageView.current} deleteImageSet={deleteImageSet} />
                                 )
                             })
                             : "loading"
@@ -129,10 +141,13 @@ function DetailWrapper(props) {
 
             </div>
             {/* 네이게이션 바 */}
-            <div className="absolute bottom-0 w-full flex rounded-t-lg border bg-blue-100 p-3
-                            md:order-first md:rounded-none md:top-0 md:bottom-auto">
+            <div className="absolute bottom-0 
+                            w-full flex 
+                            rounded-t-[20px]
+                            bg-red-100 p-3
+                            md:order-first md:rounded-b-[10px] md:rounded-t-none md:top-0 md:bottom-auto">
                 {/* <button>pre</button> */}
-                <nav className="flex-1 text-center">{contentInfo.title}</nav>
+                <nav className="flex-1 text-center font-medium text-gray-600">{contentInfo.title}</nav>
                 {/* <button>back</button> */}
             </div>
 
@@ -158,10 +173,9 @@ function ImageComponent(props) {
     const [isAmend, setAmend] = useContext(AmendContext);
 
     const clickImageAtList = () => {
-        const detail_image_wapper = document.getElementById("detail_image_wapper");
-        const image_viewer = document.getElementById("detail_image_view");
-        detail_image_wapper.hidden = false;
-        image_viewer.src = props.src;
+        props.wapper.hidden = false;
+        props.element.hidden = false;
+        props.element.src = props.src;
     };
 
     const clickCheckBox = (event) => {
@@ -177,7 +191,7 @@ function ImageComponent(props) {
     return (
         <div className="relative
                         md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
-                        hover:shadow-2xl hover:bg-gray-200 ">
+                        hover:bg-gray-100 ">
             {
                 isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src} onClick={(event) => clickCheckBox(event)}></input> : ""
             }
