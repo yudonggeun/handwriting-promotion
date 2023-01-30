@@ -78,11 +78,14 @@ function Content(props) {
     const deleteContent = props.deleteContent;
 
     return (
-        <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
+        <div className="bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
             {/* title */}
             <input type="text" ref={titleRef} readOnly={!isAmend} className="rounded-t-lg text-center text-gray-800 font-medium text-2xl border-b p-5 w-full outline-none" defaultValue={info.title} placeholder="무슨 제목을 쓸까요?"></input>
             {/* images */}
-            <div className="w-full grid grid-cols-2 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-4 p-1">
+            <div className="w-full grid grid-cols-2 p-1
+                            md:grid-rows-1 md:grid-cols-3 
+                            lg:grid-cols-4
+                            ">
                 {
                     info.images.map((src, index) => {
                         return (

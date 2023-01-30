@@ -74,17 +74,21 @@ function MainLayout(props) {
 
     return (
         // 메인 배경 설정
-        <div id="mainPage" className="relative w-full h-full bg-gradient-to-b from-red-500 to-white overflow-y-auto scrollbar-hide" >
+        <div id="mainPage" className="relative w-full h-full bg-gradient-to-b from-red-400 to-white overflow-y-auto scrollbar-hide" >
             {
                 loading ? <Loading />
                     :
                     <div className="flex flex-col w-full h-full">
                         <Intro info={introInfo} />
-                        <div id="contentArea" ref={contentWrapper} className="flex flex-col md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
-                            <h2 className="text-gray-800 font-medium text-2xl text-center md:text-left bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
-                            {contentInfos?.map((obj, index) => {
-                                return (<Content info={obj} index={index} key={obj.id} id={`content${index}`} deleteContent={deleteContent} />)
-                            })}
+                        <div id="contentArea" ref={contentWrapper} className="md:overflow-auto md:scrollbar-hide flex-1 w-full px-2 py-5 md:p-5">
+                            <h2 className="text-gray-800 font-medium text-2xl text-center bg-white rounded-lg shadow-md mb-2 md:mb-5 p-2">무엇을 배우나요?</h2>
+                            <div className="w-full 
+                                            3xl:grid 3xl:grid-cols-2 3xl:gap-5
+                                            4xl:grid-cols-3">
+                                {contentInfos?.map((obj, index) => {
+                                    return (<Content info={obj} index={index} key={obj.id} id={`content${index}`} deleteContent={deleteContent} />)
+                                })}
+                            </div>
                             {isAmend ? <ContentForm addContent={addContent} />
                                 :
                                 <div onClick={() => loginPage()} className="order-last text-right p-2 md:p-5 md:text-xl text-gray-600">
@@ -95,7 +99,7 @@ function MainLayout(props) {
                     </div>
             }
             <div className="absolute right-0 bottom-0 flex flex-col w-fit m-2">
-                <button ref={topRef} className="hidden w-9 h-9 p-1 rounded-full bg-gray-200 hover:bg-gray-500 hover:opacity-80 text-white opacity-50 mb-2">top</button>
+                <button ref={topRef} className="hidden w-9 h-9 p-1 rounded-full bg-gray-200 hover:bg-gray-500 hover:opacity-80 text-white opacity-70 mb-2">top</button>
             </div>
         </div>
     )
