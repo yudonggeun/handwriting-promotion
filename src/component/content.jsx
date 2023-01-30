@@ -78,9 +78,14 @@ function Content(props) {
     const deleteContent = props.deleteContent;
 
     return (
-        <div className="snap-always snap-center bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
-            <input type="text" ref={titleRef} readOnly={!isAmend} className="rounded-t-lg text-center text-2xl border-b p-5 w-full outline-none" defaultValue={info.title} placeholder="무슨 제목을 쓸까요?"></input>
-            <div className="w-full grid grid-cols-2 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-4 p-1">
+        <div className="bg-white border-t border-gray-100 rounded-lg shadow-md mb-5">
+            {/* title */}
+            <input type="text" ref={titleRef} readOnly={!isAmend} className="rounded-t-lg text-center text-gray-800 font-medium text-2xl border-b p-5 w-full outline-none" defaultValue={info.title} placeholder="무슨 제목을 쓸까요?"></input>
+            {/* images */}
+            <div className="w-full grid grid-cols-2 p-1
+                            md:grid-rows-1 md:grid-cols-3 
+                            lg:grid-cols-4
+                            ">
                 {
                     info.images.map((src, index) => {
                         return (
@@ -91,14 +96,15 @@ function Content(props) {
                     })
                 }
             </div>
+            {/* description */}
             {isAmend
-                ? <textarea className="p-1 md:p-5 text-md w-full outline-none resize-none" ref={descriptionRef} readOnly={!isAmend} defaultValue={info.description} placeholder="설명이 비었네요?? 설명을 써주세요!"></textarea>
-                : <div className="p-5 text-md w-full outline-none resize-none" ref={descriptionRef}>{info.description}</div>
+                ? <textarea className="p-1 md:p-5 text-md w-full text-gray-800 outline-none resize-none" ref={descriptionRef} readOnly={!isAmend} defaultValue={info.description} placeholder="설명이 비었네요?? 설명을 써주세요!"></textarea>
+                : <div className="p-5 text-md w-full outline-none resize-none text-gray-800" ref={descriptionRef}>{info.description}</div>
             }
             <div className="flex justify-end">
                 {isAmend ? <button className="bg-gray-400 hover:bg-gray-700 text-white rounded-lg ml-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}DeleteModal`}>삭제하기</button> : ""}
                 {isAmend ? <button className="bg-red-400 hover:bg-red-600 text-white rounded-lg ml-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}ModifyModal`}>수정하기</button> : ""}
-                <button className="text-blue-300 hover:text-blue-900 rounded-lg mx-5 my-3 p-1" onClick={() => {
+                <button className="text-pink-300 hover:text-pink-900 rounded-lg mx-5 my-3 p-1" onClick={() => {
                     const obj = getObj();
                     changeView(obj, "detail");
                 }}>더보기</button>
