@@ -116,7 +116,7 @@ function DetailWrapper(props) {
                         className="h-fit max-h-full 
                                    object-contain
                                    rounded-md md:shadow-2xl
-                                   md:border md:ring-0 md:ring-offset-[29px] md:ring-black md:border-gray-900
+                                   md:ring-0 md:ring-offset-[19px] md:ring-black md:border-gray-900
                                    " src="" alt="" hidden={true}></img>
                     {/* <div className="max-h-full bg-white grid gap-5 justify-center rounded-md md:shadow-lg md:border py-5 md:px-5">
                         <img ref={imageView} className="max-h-full object-contain md:border" src="" alt=""></img>
