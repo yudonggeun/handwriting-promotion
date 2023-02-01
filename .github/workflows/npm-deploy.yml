@@ -24,6 +24,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: npm install
+        run: npm install
+      
       - name: build project
         run: npm run build
       
