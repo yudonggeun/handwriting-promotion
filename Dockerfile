@@ -4,7 +4,7 @@ RUN mkdir /app
 # work dir 고정
 WORKDIR /app
 RUN mkdir ./build
-ADD ./build ./build
+# ADD ./build ./build #도커 볼륨으로 대체
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./nginx.conf /etc/nginx/conf.d
 EXPOSE 80
