@@ -3,17 +3,11 @@ import DetailWrapper from "./detail";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
-import UrlContext from "../context/url";
 import LoginPage from "./login";
 import MainLayout from "./main";
+import API from "../config/urlConfig"
 
 function RootLayout() {
-
-    const host = `${window.location.protocol}//${window.location.host}/api`;//docker deploy default url
-    // const host = window.location.origin;//local dev test url
-    const contentInfosURL = `${host}/data/content`;
-    const amendURL = `${host}/admin/isAmend`;
-    const introInfosURL = `${host}/data/intro`;
 
     const [pageInfo, setPageInfo] = useState({ page: "main", id: null });
     const [introInfo, setIntroInfo] = useState(null);
@@ -63,7 +57,7 @@ function RootLayout() {
     }
 
     const requestAmend = () => {
-        fetch(amendURL, {
+        fetch(API.amendURL, {
             headers: {
                 Authorization: localStorage.getItem("access-token")
             }
@@ -80,10 +74,7 @@ function RootLayout() {
     }
 
     const requestImageSrouces = async (id) => {
-        const contentImageURL = `${host}/data/content/image`;
-
-        console.log("call", contentImageURL);
-        return await fetch(contentImageURL + "?content_id=" + id)
+        return await fetch(API.CONTENT_IMAGE + "?content_id=" + id)
             .then((response) => response.json())
             .catch((e) => {
                 console.log(e);
@@ -92,8 +83,7 @@ function RootLayout() {
     }
 
     const requestContentInfos = () => {
-        console.log("call", contentInfosURL);
-        fetch(contentInfosURL)
+        fetch(API.contentInfosURL)
             .then((response) => response.json())
             .then((data) => {
                 setContentInfos(data);
@@ -105,7 +95,7 @@ function RootLayout() {
 
     const requestIntroInfos = () => {
         console.log("intro info get");
-        fetch(introInfosURL)
+        fetch(API.introInfosURL)
             .then((response) => response.json())
             .then((data) => {
                 setIntroInfo(data);
@@ -123,7 +113,6 @@ function RootLayout() {
 
     return (
         <div id="service_root" className="w-screen h-screen overflow-hidden">
-            <UrlContext.Provider value={host}>
                 <AmendContext.Provider value={[isAmend, setAmend]}>
                     <PageContext.Provider value={changeView}>
                         <DetailInfoContext.Provider value={contentDetailInfo}>
@@ -136,7 +125,6 @@ function RootLayout() {
                         </DetailInfoContext.Provider>
                     </PageContext.Provider>
                 </AmendContext.Provider>
-            </UrlContext.Provider>
         </div>
     )
 }

@@ -3,14 +3,13 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { useContext } from "react";
+import API from "../config/urlConfig";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
-import UrlContext from "../context/url";
 
 function DetailWrapper(props) {
 
-    const host = useContext(UrlContext);
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
     const [isAmend, setAmend] = useContext(AmendContext);
@@ -34,10 +33,8 @@ function DetailWrapper(props) {
     }
 
     const requestImageSrouces = async (id) => {
-        const contentImageURL = `${host}/data/content/image`;
 
-        console.log("call", contentImageURL);
-        return await fetch(contentImageURL + "?content_id=" + id)
+        return await fetch(API.CONTENT_IMAGE + "?content_id=" + id)
             .then((response) => response.json())
             .catch((e) => {
                 console.log(e);
@@ -46,12 +43,9 @@ function DetailWrapper(props) {
     }
 
     const requestAddDetailImage = async () => {
-        const url = `${host}/data/detail/${contentInfo.id}`;
         const formData = new FormData(document.getElementById("detail_form"));
 
-        console.log("call", url);
-
-        fetch(url, {
+        fetch(`${API.IMAGE_CHANGE}/${contentInfo.id}`, {
             method: 'PUT',
             headers: {
                 Authorization: localStorage.getItem("access-token")
@@ -71,10 +65,8 @@ function DetailWrapper(props) {
     }
 
     const requestDeleteImage = () => {
-        const url = `${host}/data/detail/${contentInfo.id}`;
-        console.log("call", url);
 
-        fetch(url, {
+        fetch(`${API.IMAGE_CHANGE}/${contentInfo.id}`, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("access-token"),

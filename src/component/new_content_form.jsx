@@ -1,10 +1,9 @@
 import { useRef } from "react";
-import { useContext, useState } from "react";
-import UrlContext from "../context/url";
+import { useState } from "react";
+import API from "../config/urlConfig";
 
 function ContentForm(props) {
 
-    const host = useContext(UrlContext);
     const [update, setUpdate] = useState(1);
 
     const [images, setImages] = useState([]);
@@ -44,8 +43,6 @@ function ContentForm(props) {
     }
 
     const requestCreateDetail = async (createSuccessProcessFuntion) => {
-        const url = `${host}/data/content`;
-        console.log("call", url);
 
         if (titleRef.current.value === "") {
             alert("제목은 필수로 입력해야합니다.");
@@ -60,7 +57,7 @@ function ContentForm(props) {
             description: detailRef.current.value
         })], { type: "application/json" }));
 
-        fetch(url, {
+        fetch(API.CONTENT_CHANGE, {
             method: 'PUT',
             headers: {
                 Authorization: localStorage.getItem("access-token")

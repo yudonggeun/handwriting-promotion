@@ -1,25 +1,22 @@
 import React, { useContext } from "react";
 import AmendContext from "../context/amend_status_context";
-import UrlContext from "../context/url";
 import Modal from "./modal";
+import API from "../config/urlConfig"
 
 function Intro(props) {
 
-    const host = useContext(UrlContext);
     const info = props.info;
     let amend_file;
 
     const [isAmend, setAmend] = useContext(AmendContext);
-    const url = `${host}/data/intro`;
 
     const requestAmendIntro = () => {
 
-        console.log("call", url);
         const formData = new FormData();
         formData.append("file", amend_file);
         formData.append("dto", new Blob([JSON.stringify(info)], { type: "application/json" }));
 
-        fetch(url, {
+        fetch(API.INTRO_CHANGE, {
             method: 'POST',
             headers: {
                 Authorization: localStorage.getItem("access-token")

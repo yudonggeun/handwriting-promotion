@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import { useRef } from "react";
 import AmendContext from "../context/amend_status_context";
 import PageContext from "../context/page_context";
-import UrlContext from "../context/url";
 import Modal from "./modal";
+import API from "../config/urlConfig"
 
 function Content(props) {
 
@@ -17,11 +17,8 @@ function Content(props) {
     const titleRef = useRef();
     const descriptionRef = useRef();
 
-    const host = useContext(UrlContext);
-    const url = `${host}/data/content`;
-
     const requestAmendContent = () => {
-        fetch(url, {
+        fetch(API.CONTENT_CHANGE, {
             method: 'POST',
             headers: {
                 Authorization: localStorage.getItem("access-token"),
@@ -44,7 +41,7 @@ function Content(props) {
     }
 
     const requestDeleteContent = () => {
-        fetch(url, {
+        fetch(API.CONTENT_CHANGE, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("access-token"),

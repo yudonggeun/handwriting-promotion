@@ -1,12 +1,10 @@
 import React, { useContext } from "react";
+import API from "../config/urlConfig";
 import AmendContext from "../context/amend_status_context";
 import PageContext from "../context/page_context";
-import UrlContext from "../context/url";
 
 function LoginPage(props) {
 
-    const host = useContext(UrlContext);
-    const url = `${host}/admin/login`;
     const changeView = useContext(PageContext);
     const loginFailMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.";
     const [isAmend, setAmend] = useContext(AmendContext);
@@ -19,7 +17,7 @@ function LoginPage(props) {
         const id = document.getElementById("loginId").value;
         const pw = passwordElement.value;
 
-        fetch(url, {
+        fetch(API.LOGIN, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

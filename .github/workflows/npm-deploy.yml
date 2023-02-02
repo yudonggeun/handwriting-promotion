@@ -27,14 +27,14 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: npm install
+        run: npm install # 실수 3 npm install 실행하지 않아 npm run build 시 라이브러리 의존성을 해결하지 못해 실패
       - name: Generate build
-        run: CI='false' npm run build
+        run: CI='false' npm run build # 실수 1 ci true가 디폴트로 설정되어 npm run build가 workflow 실패
         
       - name: Share artifact inside workflow
         uses: actions/upload-artifact@v1
         with:
-          name: build
+          name: build # upload 폴더 이름
           path: build
 
   deploy:
@@ -46,12 +46,12 @@ jobs:
       - name: Get artifact
         uses: actions/download-artifact@v1
         with:
-          name: build
+          name: build # download 폴더 이름 : 실수 2 upload 폴더와 download 폴더 이름이 달라 에러 발생
           
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_GIT_ACTION_USER_NAME }}
+          aws-access-key-id: ${{ secrets.AWS_GIT_ACTION_USER_NAME }} # 실수 4 IAM access key 생성해야하는데 AWS CodeCommit에 대한 HTTPS Git 자격 증명을 생성
           aws-secret-access-key: ${{ secrets.AWS_GIT_ACTION_PASSWORD }}
           aws-region: ${{ env.AWS_REGION }}
 
