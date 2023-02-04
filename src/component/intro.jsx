@@ -25,7 +25,9 @@ function Intro(props) {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('Success:', data);
+                if (data.status !== "success") {
+                    alert(`POST ${API.INTRO_CHANGE} : 인트로 수정이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);

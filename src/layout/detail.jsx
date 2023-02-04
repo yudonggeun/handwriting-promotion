@@ -36,6 +36,13 @@ function DetailWrapper(props) {
 
         return await fetch(API.CONTENT_IMAGE + "?content_id=" + id)
             .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success") {
+                    return data.data;
+                } else {
+                    alert(`GET ${API.CONTENT_IMAGE} : 홍보 이미지 목록 조회가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                } 
+            })
             .catch((e) => {
                 console.log(e);
                 alert("오류 발생");
@@ -54,10 +61,12 @@ function DetailWrapper(props) {
         })
             .then((response) => response.json())
             .then(async (data) => {
-                console.log('Success:', data);
-                const newImgList = await requestImageSrouces(contentInfo.id);
-                console.log(newImgList);
-                changeImageList(newImgList);
+                if (data.status === "success") {
+                    const newImgList = await requestImageSrouces(contentInfo.id);
+                    changeImageList(newImgList);
+                } else {
+                    alert(`PUT ${API.IMAGE_CHANGE}/${contentInfo.id} : 이미지 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -78,9 +87,12 @@ function DetailWrapper(props) {
         })
             .then((response) => response.json())
             .then(async (data) => {
-                console.log('Success:', data);
-                const newImgList = await requestImageSrouces(contentInfo.id);
-                changeImageList(newImgList);
+                if (data.status === "success") {
+                    const newImgList = await requestImageSrouces(contentInfo.id);
+                    changeImageList(newImgList);
+                } else {
+                    alert(`DELETE ${API.IMAGE_CHANGE}/${contentInfo.id} : 이미지 삭제가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -89,7 +101,7 @@ function DetailWrapper(props) {
 
     const clickBackButton = () => {
         imageWapper.current.hidden = true;
-        imageView.current.hidden = true;        
+        imageView.current.hidden = true;
         changeView(null, "main")
     }
 

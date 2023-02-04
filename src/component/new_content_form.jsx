@@ -7,7 +7,7 @@ function ContentForm(props) {
     const [update, setUpdate] = useState(1);
 
     const [images, setImages] = useState([]);
-    
+
     const formRef = useRef();
     const titleRef = useRef();
     const detailRef = useRef();
@@ -66,15 +66,18 @@ function ContentForm(props) {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("put obj : ", data);
-                createSuccessProcessFuntion(data);
-                
+                if (data.status === "success") {
+                    createSuccessProcessFuntion(data.data);
+                } else {
+                    alert(`PUT ${API.CONTENT_CHANGE} : 홍보글 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
     }
     
+
     const createSuccessProcessFuntion = (obj) => {
         //양식 초기화
         titleRef.current.value = "";

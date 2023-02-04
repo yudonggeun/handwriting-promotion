@@ -65,6 +65,7 @@ function MainLayout(props) {
     }, [loading]);
 
     const addContent = (obj) => {
+        console.log("addContent", obj);
         setContentInfos(contentInfos.concat([obj]))
     }
 
