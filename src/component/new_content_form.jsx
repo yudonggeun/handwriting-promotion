@@ -1,6 +1,9 @@
 import { useRef } from "react";
 import { useState } from "react";
 import API from "../config/urlConfig";
+import ImageUtil from "../util/image_util"
+
+
 
 function ContentForm(props) {
 
@@ -16,26 +19,20 @@ function ContentForm(props) {
     //functions
     const addContent = props.addContent;
 
-    const readURL = file => {
-        return new Promise((res, rej) => {
-            const reader = new FileReader();
-            reader.onload = e => res(e.target.result);
-            reader.onerror = e => rej(e);
-            reader.readAsDataURL(file);
-        });
-    };
-
     const rerender = () => {
         setUpdate(update ^ 1);
     }
 
     const addImages = async (event) => {
+        // ImageUtil.handleImageUpload(event);//추가여부 고민
         const files = event.target.files;
         const fileCount = event.target.files.length;
         const newImage = [];
 
+        console.log("add", files);
+
         for (var i = 0; i < fileCount; i++) {
-            const url = await readURL(files[i]);
+            const url = await ImageUtil.readURL(files[i]);
             newImage.push(url);
         }
         setImages(newImage);
@@ -50,7 +47,6 @@ function ContentForm(props) {
         }
 
         console.log("file len : ", fileRef.current.files.length)
-
         const formData = fileRef.current.files.length === 0 ? new FormData() : new FormData(formRef.current);
         formData.append("dto", new Blob([JSON.stringify({
             title: titleRef.current.value,
@@ -65,9 +61,9 @@ function ContentForm(props) {
             body: formData
         })
             .then((response) => response.json())
-            .then((data) => {
-                if (data.status === "success") {
-                    createSuccessProcessFuntion(data.data);
+            .then((response) => {
+                if (response.status === "success") {
+                    createSuccessProcessFuntion(response.data);
                 } else {
                     alert(`PUT ${API.CONTENT_CHANGE} : 홍보글 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
@@ -76,7 +72,7 @@ function ContentForm(props) {
                 console.error('Error:', error);
             });
     }
-    
+
 
     const createSuccessProcessFuntion = (obj) => {
         //양식 초기화
@@ -117,7 +113,7 @@ function ContentForm(props) {
                 <form className="bg-green-500 hover:bg-green-600 rounded-lg mx-2 my-3 p-1" ref={formRef}>
                     <label htmlFor="new_content_images"
                         className="text-white">파일 추가</label>
-                    <input id="new_content_images" name="image" type="file" multiple ref={fileRef} hidden onChange={(event) => addImages(event)}></input>
+                    <input id="new_content_images" name="image" type="file" multiple ref={fileRef} hidden onChange={(event) => { addImages(event); }}></input>
                 </form>
                 <button className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg mr-5 ml-2 my-3 p-1" onClick={() => requestCreateDetail(createSuccessProcessFuntion)}>새로운 홍보글 추가</button>
             </div>
