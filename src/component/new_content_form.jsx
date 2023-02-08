@@ -15,6 +15,7 @@ function ContentForm(props) {
     const titleRef = useRef();
     const detailRef = useRef();
     const fileRef = useRef();
+    const compressFileRef = useRef();
 
     //functions
     const addContent = props.addContent;
@@ -23,10 +24,15 @@ function ContentForm(props) {
         setUpdate(update ^ 1);
     }
 
-    const addImages = async (event) => {
-        // ImageUtil.handleImageUpload(event);//추가여부 고민
-        const files = event.target.files;
-        const fileCount = event.target.files.length;
+    const fileOnChange = async () => {
+        addImages();
+        const compressFiles = await ImageUtil.handleImageUpload(fileRef.current);
+        compressFileRef.current.files = compressFiles;
+    }
+
+    const addImages = async () => {
+        const files = fileRef.current.files;
+        const fileCount = fileRef.current.files.length;
         const newImage = [];
 
         console.log("add", files);
@@ -113,7 +119,8 @@ function ContentForm(props) {
                 <form className="bg-green-500 hover:bg-green-600 rounded-lg mx-2 my-3 p-1" ref={formRef}>
                     <label htmlFor="new_content_images"
                         className="text-white">파일 추가</label>
-                    <input id="new_content_images" name="image" type="file" multiple ref={fileRef} hidden onChange={(event) => { addImages(event); }}></input>
+                    <input id="new_content_images" name="image" type="file" multiple ref={fileRef} hidden onChange={() => fileOnChange()}></input>
+                    <input name="compressImage" type="file" multiple ref={compressFileRef} hidden></input>
                 </form>
                 <button className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg mr-5 ml-2 my-3 p-1" onClick={() => requestCreateDetail(createSuccessProcessFuntion)}>새로운 홍보글 추가</button>
             </div>
