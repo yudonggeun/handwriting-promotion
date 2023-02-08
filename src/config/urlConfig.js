@@ -1,7 +1,7 @@
 
-const host = `http://localhost:3000`; //local enviroment
+// const host = `http://localhost:3000`; //local enviroment
 // const host = `http://localhost/api`; //test enviroment at docker
-// const host = `http://www.beautifulwriting.site/api`; //operation enviroment
+const host = `http://www.beautifulwriting.site/api`; //operation enviroment
 
 const API = {
     HOST: host,
