@@ -33,7 +33,9 @@ function Content(props) {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('Success:', data);
+                if (data.status !== "success") {
+                    alert(`POST ${API.CONTENT_CHANGE} : 홍보 컨텐츠 수정이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -55,8 +57,12 @@ function Content(props) {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('삭제했습니다. :', data);
-                deleteContent(id);
+                if (data.status === "success") {
+                    deleteContent(id);
+                } else {
+                    alert(`DELETE ${API.CONTENT_CHANGE} : 홍보 컨텐츠 삭제가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                }
+
             })
             .catch((error) => {
                 console.error('Error:', error);

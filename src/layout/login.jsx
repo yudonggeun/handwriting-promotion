@@ -29,20 +29,23 @@ function LoginPage(props) {
         })
             .then((response) => {
                 const token = response.headers.get("authorization");
-                if(token){
+                if (token) {
                     localStorage.setItem("access-token", token);
                 }
                 return response.json()
             }
             )
             .then((data) => {
-                console.log('Success:', data);
-                if (data.amendAuthority) {
-                    setAmend(true);
-                    changeView(null, "main");
+                if (data.status === "success") {
+                    if (data.data.amendAuthority) {
+                        setAmend(true);
+                        changeView(null, "main");
+                    } else {
+                        passwordElement.value = "";
+                        alert(loginFailMessage);
+                    }
                 } else {
-                    passwordElement.value = "";
-                    alert(loginFailMessage);
+                    alert(`POST ${API.LOGIN} : 로그인이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
             })
             .catch((error) => {

@@ -64,9 +64,14 @@ function RootLayout() {
         })
             .then((response) => response.json())
             .then((data) => {
-                if (data.status === true) {
-                    setAmend(data.amendAuthority);
+                if (data.status === "success") {
+                    if (data.data.status === true) {
+                        setAmend(data.data.amendAuthority);
+                    }
+                } else {
+                    alert(`GET ${API.amendURL} : 요청 실패! 관리자에게 문의하세요.`);
                 }
+
             }).catch((e) => {
                 console.log(e);
                 setAmend(false);
@@ -76,6 +81,13 @@ function RootLayout() {
     const requestImageSrouces = async (id) => {
         return await fetch(API.CONTENT_IMAGE + "?content_id=" + id)
             .then((response) => response.json())
+            .then((response) => {
+                if (response.status === "success") {
+                    return response.data;
+                } else {
+                    alert(`GET ${API.CONTENT_IMAGE} : 홍보 이미지 목록 조회가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                }
+            })
             .catch((e) => {
                 console.log(e);
                 alert("오류 발생");
@@ -85,8 +97,12 @@ function RootLayout() {
     const requestContentInfos = () => {
         fetch(API.contentInfosURL)
             .then((response) => response.json())
-            .then((data) => {
-                setContentInfos(data);
+            .then((response) => {
+                if(response.status === "success"){
+                    setContentInfos(response.data);
+                } else {
+                    alert(`GET ${API.contentInfosURL} : 요청 실패! 관리자에게 문의하세요.`);
+                }
             }).catch((e) => {
                 console.log(e);
                 alert("오류 발생");
@@ -94,12 +110,16 @@ function RootLayout() {
     }
 
     const requestIntroInfos = () => {
-        console.log("intro info get");
         fetch(API.introInfosURL)
             .then((response) => response.json())
-            .then((data) => {
-                setIntroInfo(data);
-            }).catch((e) => {
+            .then((response) => {
+                if(response.status === "success"){
+                    setIntroInfo(response.data);
+                } else {
+                    alert(`GET ${API.introInfosURL} : 요청 실패! 관리자에게 문의하세요.`);
+                }
+            })
+            .catch((e) => {
                 console.log(e);
                 alert("오류 발생");
             });
@@ -113,18 +133,18 @@ function RootLayout() {
 
     return (
         <div id="service_root" className="w-screen h-screen overflow-hidden">
-                <AmendContext.Provider value={[isAmend, setAmend]}>
-                    <PageContext.Provider value={changeView}>
-                        <DetailInfoContext.Provider value={contentDetailInfo}>
-                            {pageInfo.page !== "login" ?
-                                <div className="w-full h-full">
-                                    <MainLayout introInfo={introInfo} contentInfos={contentInfos} setContentInfos={setContentInfos} />
-                                    <DetailWrapper id={pageInfo.id} />
-                                </div> : ""}
-                            {pageInfo.page === "login" ? <LoginPage setAmend={setAmend} /> : ""}
-                        </DetailInfoContext.Provider>
-                    </PageContext.Provider>
-                </AmendContext.Provider>
+            <AmendContext.Provider value={[isAmend, setAmend]}>
+                <PageContext.Provider value={changeView}>
+                    <DetailInfoContext.Provider value={contentDetailInfo}>
+                        {pageInfo.page !== "login" ?
+                            <div className="w-full h-full">
+                                <MainLayout introInfo={introInfo} contentInfos={contentInfos} setContentInfos={setContentInfos} />
+                                <DetailWrapper id={pageInfo.id} />
+                            </div> : ""}
+                        {pageInfo.page === "login" ? <LoginPage setAmend={setAmend} /> : ""}
+                    </DetailInfoContext.Provider>
+                </PageContext.Provider>
+            </AmendContext.Provider>
         </div>
     )
 }
