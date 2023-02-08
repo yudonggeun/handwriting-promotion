@@ -13,8 +13,9 @@ const ImageUtil = {
             console.log(e);
         }
     },
-    handleImageUpload: async (e) => {
-        const files = e.target.files;
+    handleImageUpload: async (target) => {
+        console.log(target);
+        const files = target.files;
         if (!files) {
             console.log(`error : 입력한 파일이 없습니다.`);
             return;
@@ -25,10 +26,9 @@ const ImageUtil = {
             const compressedImage = await ImageUtil.compressImage(originalImage);
             const fileName = (Math.random() + 1).toString(36).substring(2, 12) + files[i].name;
             dataTransfer.items.add(new File([compressedImage], fileName, { lastModified: new Date().getTime(), type: compressedImage.type }));
-            console.log(new File([compressedImage], fileName, { lastModified: new Date().getTime(), type: compressedImage.type }).size)
         }
-        e.target.files = dataTransfer.files;
-        console.log("압축", e.target.files);
+        console.log(dataTransfer.items);
+        return dataTransfer.files;
     },
     readURL: (file) => {
         return new Promise((res, rej) => {
