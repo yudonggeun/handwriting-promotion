@@ -8,7 +8,7 @@ cd $PROJECT_ROOT
 # 생성된 도커 컨테이너가 없다면 생성
 if [ -z $(sudo docker ps -aqf name=handwriting_react)]; then
 # 생성된 도커 이미지가 없다면 생성
-    if [-z $(sudo docker images --filter=reference="nginx-react" -q)]; then
+    if [ -z $(sudo docker images --filter=reference="nginx-react" -q)]; then
         sudo docker build -t nginx-react:0.1 .
     fi
     sudo docker run \
