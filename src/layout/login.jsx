@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
+import GoogleLogin from "../component/oauth/googleOauth";
 import API from "../config/urlConfig";
 import AmendContext from "../context/amend_status_context";
 import PageContext from "../context/page_context";
@@ -9,13 +10,25 @@ function LoginPage(props) {
     const loginFailMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.";
     const [isAmend, setAmend] = useContext(AmendContext);
 
+    const inputPassword = useRef();
+    const inputId = useRef();
+
+    const loginSuccess = () => {
+        setAmend(true);
+        changeView(null, "main");
+    }
+
+    const loginFail = () => {
+        inputPassword.current.value = "";
+        alert(loginFailMessage);
+    }
+
     const requestLogin = () => {
 
         console.log("request login");
-        const passwordElement = document.getElementById("loginPw");
 
-        const id = document.getElementById("loginId").value;
-        const pw = passwordElement.value;
+        const id = inputId.current.value;
+        const pw = inputPassword.current.value;
 
         fetch(API.LOGIN, {
             method: 'POST',
@@ -35,14 +48,12 @@ function LoginPage(props) {
                 return response.json()
             }
             )
-            .then((data) => {
-                if (data.status === "success") {
-                    if (data.data.amendAuthority) {
-                        setAmend(true);
-                        changeView(null, "main");
+            .then((response) => {
+                if (response.status === "success") {
+                    if (response.data.amendAuthority) {
+                        loginSuccess();
                     } else {
-                        passwordElement.value = "";
-                        alert(loginFailMessage);
+                        loginFail();
                     }
                 } else {
                     alert(`POST ${API.LOGIN} : 로그인이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
@@ -65,14 +76,14 @@ function LoginPage(props) {
                         type="text"
                         name="id"
                         className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                        id="loginId" placeholder="Username" />
+                        ref={inputId} placeholder="Username" />
                 </div>
                 <div className="mb-4">
                     <input
                         type="password"
                         name="pw"
                         className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                        id="loginPw" placeholder="Password" />
+                        ref={inputPassword} placeholder="Password" />
                 </div>
                 <div className="text-center pt-1 mb-12 pb-1">
                     <button
@@ -87,6 +98,7 @@ function LoginPage(props) {
                         onClick={() => changeView(null, "main")}>
                         HOME
                     </button>
+                    <GoogleLogin/>
                 </div>
             </div>
         </div>
