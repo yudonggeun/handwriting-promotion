@@ -4,7 +4,7 @@ import API from "../../config/urlConfig";
 function GoogleLogin(props) {
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
-        <a className="py-1 px-2 flex border rounded-md hover:bg-blue-100 hover:border-blue-200" href={`${API.GOOGLE_LOGIN}`}>
+        <a className="mb-2 py-1 px-2 flex border rounded-md hover:bg-green-100 hover:border-green-200" href={`${API.GOOGLE_LOGIN}`}>
             <div className="w-5 h-4">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-full h-full">
                     <g>
