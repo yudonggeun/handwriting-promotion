@@ -20,7 +20,7 @@ const API = {
     CONTENT_IMAGE: `${protocol()}${host}/data/content/image`,
 
     LOGIN: `${host}/admin/login`,
-    GOOGLE_LOGIN: `${host}/oauth2/authorization/Google`,
+    GOOGLE_LOGIN: `${host}/oauth2/authorization/google`,
 }
 
 export default API;
