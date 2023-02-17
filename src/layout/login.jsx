@@ -85,15 +85,17 @@ function LoginPage(props) {
                         className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                         ref={inputPassword} placeholder="Password" />
                 </div>
-                <div className="text-center pt-1 mb-12 pb-1">
+                <div className="flex flex-col text-center pt-1 mb-1 pb-1">
                     <button
-                        className="mb-2 bg-gradient-to-r from-green-500 to-blue-50 w-full rounded-md shadow-md uppercase py-1 text-white"
+                        className="mb-2 bg-gradient-to-r from-blue-300 to-slate-300 hover:to-slate-400 rounded-md shadow-md uppercase py-1 
+                        text-xs text-white"
                         typeof="button"
                         onClick={() => requestLogin()}>
                         Log in
                     </button>
                     <button
-                        className="bg-gradient-to-r from-pink-300 to-red-50 w-full rounded-md shadow-md uppercase py-1 text-white"
+                        className="mb-2 bg-gradient-to-r from-red-300 to-pink-300 hover:to-pink-400 rounded-md shadow-md uppercase py-1 
+                        text-xs text-white"
                         typeof="button"
                         onClick={() => changeView(null, "main")}>
                         HOME

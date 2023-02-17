@@ -19,7 +19,7 @@ const API = {
     IMAGE_CHANGE: `${protocol()}${host}/data/detail`,
     CONTENT_IMAGE: `${protocol()}${host}/data/content/image`,
 
-    LOGIN: `${host}/admin/login`
+    LOGIN: `${host}/admin/login`,
 }
 
 export default API;
