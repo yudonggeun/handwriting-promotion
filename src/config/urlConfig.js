@@ -20,6 +20,7 @@ const API = {
     CONTENT_IMAGE: `${protocol()}${host}/data/content/image`,
 
     LOGIN: `${host}/admin/login`,
+    KAKAO_OAUTH: `${host}/oauth2/authorization/kakao`,
     GOOGLE_LOGIN: `${host}/oauth2/authorization/google`,
 }
 

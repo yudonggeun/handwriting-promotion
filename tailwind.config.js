@@ -21,6 +21,9 @@ module.exports = {
     extend: {
       padding: {
         '30px': '30px',
+      },
+      colors: {
+        'kakao': '#FFDE00'
       }
     },
   },
