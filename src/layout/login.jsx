@@ -1,5 +1,6 @@
 import React, { useContext, useRef } from "react";
 import GoogleLogin from "../component/oauth/googleOauth";
+import KakaoLogin from "../component/oauth/kakaoOauth";
 import API from "../config/urlConfig";
 import AmendContext from "../context/amend_status_context";
 import PageContext from "../context/page_context";
@@ -87,20 +88,21 @@ function LoginPage(props) {
                 </div>
                 <div className="flex flex-col text-center pt-1 mb-1 pb-1">
                     <button
-                        className="mb-2 bg-gradient-to-r from-blue-300 to-slate-300 hover:to-slate-400 rounded-md shadow-md uppercase py-1 
-                        text-xs text-white"
-                        typeof="button"
-                        onClick={() => requestLogin()}>
-                        Log in
-                    </button>
-                    <button
                         className="mb-2 bg-gradient-to-r from-red-300 to-pink-300 hover:to-pink-400 rounded-md shadow-md uppercase py-1 
                         text-xs text-white"
                         typeof="button"
                         onClick={() => changeView(null, "main")}>
                         HOME
                     </button>
-                    <GoogleLogin/>
+                    <button
+                        className="mb-2 bg-gradient-to-r from-blue-300 to-slate-300 hover:to-slate-400 rounded-md shadow-md uppercase py-1 
+                        text-xs text-white"
+                        typeof="button"
+                        onClick={() => requestLogin()}>
+                        Log in
+                    </button>
+                    <GoogleLogin />
+                    <KakaoLogin />
                 </div>
             </div>
         </div>

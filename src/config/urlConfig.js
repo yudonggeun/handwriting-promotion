@@ -16,6 +16,7 @@ const API = {
     CONTENT_IMAGE: `${host}/data/content/image`,
 
     LOGIN: `${host}/admin/login`,
+    KAKAO_OAUTH: `${host}/oauth2/authorization/kakao`,
 }
 
 export default API;
