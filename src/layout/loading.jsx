@@ -2,7 +2,7 @@ import React from "react";
 
 function Loading() {
     return (
-        <div className="w-full h-full bg-white/70 grid content-center">
+        <div className="absolute z-10 w-full h-full bg-gradient-to-b from-red-400/100 to-white/80  grid content-center">
             <div className="w-full flex justify-center">
                 <img className="justify-self-center" src={`${process.env.PUBLIC_URL}/images/loading_spin.gif`} alt="로딩중" />
             </div>

@@ -6,6 +6,7 @@ import Content from "../component/content";
 import ContentForm from "../component/new_content_form";
 import { useRef } from "react";
 import Loading from "./loading";
+import LoadingContext from "../context/loading_context";
 
 function MainLayout(props) {
 
@@ -15,13 +16,18 @@ function MainLayout(props) {
     const contentInfos = props.contentInfos;
     const setContentInfos = props.setContentInfos;
     const changeView = useContext(PageContext);
+    const changeLoading = useContext(LoadingContext);
 
     const topRef = useRef();
 
     const introInfo = props.introInfo;
     const [isAmend, setAmend] = useContext(AmendContext);
+
     let loading = contentInfos == null || introInfo == null;
 
+    if(!loading){
+        changeLoading(false);
+    }
     let count = 0;
     const loginPage = () => {
         count++;
@@ -77,7 +83,7 @@ function MainLayout(props) {
         // 메인 배경 설정
         <div id="mainPage" className="relative w-full h-full bg-gradient-to-b from-red-400 to-white overflow-y-auto scrollbar-hide" >
             {
-                loading ? <Loading />
+                loading ? <Loading/>
                     :
                     <div className="flex flex-col w-full h-full">
                         <Intro info={introInfo} />

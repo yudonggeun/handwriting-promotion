@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DetailWrapper from "./detail";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
@@ -6,6 +6,8 @@ import PageContext from "../context/page_context";
 import LoginPage from "./login";
 import MainLayout from "./main";
 import API from "../config/urlConfig"
+import LoadingContext from "../context/loading_context";
+import Loading from "./loading";
 
 function RootLayout() {
 
@@ -19,6 +21,11 @@ function RootLayout() {
         images: []
     })
     const [isAmend, setAmend] = useState(false);
+    const loading = useRef();
+
+    const changeLoading = (on) => {
+        loading.current.hidden = !on;
+    }
 
     //pageName : ["main", 메인 화면] ["detail", 작품 페이지] ["login", 로그인 페이지]
     const changeView = async (obj, pageName) => {
@@ -98,7 +105,7 @@ function RootLayout() {
         fetch(API.contentInfosURL)
             .then((response) => response.json())
             .then((response) => {
-                if(response.status === "success"){
+                if (response.status === "success") {
                     setContentInfos(response.data);
                 } else {
                     alert(`GET ${API.contentInfosURL} : 요청 실패! 관리자에게 문의하세요.`);
@@ -113,7 +120,7 @@ function RootLayout() {
         fetch(API.introInfosURL)
             .then((response) => response.json())
             .then((response) => {
-                if(response.status === "success"){
+                if (response.status === "success") {
                     setIntroInfo(response.data);
                 } else {
                     alert(`GET ${API.introInfosURL} : 요청 실패! 관리자에게 문의하세요.`);
@@ -136,12 +143,17 @@ function RootLayout() {
             <AmendContext.Provider value={[isAmend, setAmend]}>
                 <PageContext.Provider value={changeView}>
                     <DetailInfoContext.Provider value={contentDetailInfo}>
-                        {pageInfo.page !== "login" ?
-                            <div className="w-full h-full">
-                                <MainLayout introInfo={introInfo} contentInfos={contentInfos} setContentInfos={setContentInfos} />
-                                <DetailWrapper id={pageInfo.id} />
-                            </div> : ""}
-                        {pageInfo.page === "login" ? <LoginPage setAmend={setAmend} /> : ""}
+                        <LoadingContext.Provider value={changeLoading}>
+                            <div ref={loading} hidden={false} className="absolute w-full h-full">
+                                <Loading />
+                            </div>
+                            {pageInfo.page !== "login" ?
+                                <div className="w-full h-full">
+                                    <MainLayout introInfo={introInfo} contentInfos={contentInfos} setContentInfos={setContentInfos} />
+                                    <DetailWrapper id={pageInfo.id} />
+                                </div> : ""}
+                            {pageInfo.page === "login" ? <LoginPage setAmend={setAmend} /> : ""}
+                        </LoadingContext.Provider>
                     </DetailInfoContext.Provider>
                 </PageContext.Provider>
             </AmendContext.Provider>
