@@ -1,6 +1,7 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { useState } from "react";
 import API from "../config/urlConfig";
+import LoadingContext from "../context/loading_context";
 import ImageUtil from "../util/image_util"
 
 
@@ -8,8 +9,9 @@ import ImageUtil from "../util/image_util"
 function ContentForm(props) {
 
     const [update, setUpdate] = useState(1);
-
     const [images, setImages] = useState([]);
+
+    const changeLoading = useContext(LoadingContext);
 
     const formRef = useRef();
     const titleRef = useRef();
@@ -59,6 +61,7 @@ function ContentForm(props) {
             description: detailRef.current.value
         })], { type: "application/json" }));
 
+        changeLoading(true);
         fetch(API.CONTENT_CHANGE, {
             method: 'PUT',
             headers: {
@@ -73,9 +76,11 @@ function ContentForm(props) {
                 } else {
                     alert(`PUT ${API.CONTENT_CHANGE} : 홍보글 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
+                changeLoading(false);
             })
             .catch((error) => {
                 console.error('Error:', error);
+                changeLoading(false);
             });
     }
 
