@@ -216,7 +216,7 @@ function ImageComponent(props) {
     const clickImageAtList = () => {
         props.wapper.hidden = false;
         props.element.hidden = false;
-        props.element.src = props.src;
+        props.element.src = props.src.original;
         props.changeImageViewHeight(100);
     };
 
@@ -236,12 +236,12 @@ function ImageComponent(props) {
                         md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
                         ">
             {
-                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src} onClick={(event) => clickCheckBox(event)}></input> : ""
+                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src.original} onClick={(event) => clickCheckBox(event)}></input> : ""
             }
             <img className="h-full w-full 
                             rounded-lg md:rounded-lg 
                             border border-1 hover:border-pink-500
-                            object-cover" src={props.src} onClick={(event) => clickImageAtList(event)} alt=""></img>
+                            object-cover" src={props.src.compress} onClick={(event) => clickImageAtList(event)} alt=""></img>
         </div>
     )
 }
