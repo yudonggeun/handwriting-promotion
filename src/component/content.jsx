@@ -93,7 +93,7 @@ function Content(props) {
                     info.images.map((src, index) => {
                         return (
                             <div className={`h-48 md:h-72 lg:h-96 hover:p-0 box-content p-2 ${index > 3 ? "hidden" : ""} md:block`} key={index}>
-                                <img className={`rounded-lg border object-cover hover:object-contain w-full h-full`} src={src} alt=""></img>
+                                <img className={`rounded-lg border object-cover hover:object-contain w-full h-full`} src={src.compress} alt=""></img>
                             </div>
                         )
                     })

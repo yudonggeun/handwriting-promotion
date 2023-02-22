@@ -35,7 +35,7 @@ function DetailWrapper(props) {
         imageWapper.current.classList.remove("hidden");
         console.log(document.body.clientHeight * heightRate / 100)
         //md 사이즈 미만에서만 적용
-        if(document.body.clientWidth < 768){
+        if (document.body.clientWidth < 768) {
             console.log("md 이하");
             imageListView.current.classList.replace("h-full", "h-1/2");
         }
@@ -167,11 +167,11 @@ function DetailWrapper(props) {
                         imgList ?
                             imgList.map((src, index) => {
                                 return (
-                                    <ImageComponent key={src} src={src} 
-                                    wapper={imageWapper.current} 
-                                    element={imageView.current} 
-                                    deleteImageSet={deleteImageSet} 
-                                    changeImageViewHeight={changeImageViewHeight}/>
+                                    <ImageComponent key={src} src={src}
+                                        wapper={imageWapper.current}
+                                        element={imageView.current}
+                                        deleteImageSet={deleteImageSet}
+                                        changeImageViewHeight={changeImageViewHeight} />
                                 )
                             })
                             : "loading"
@@ -216,7 +216,7 @@ function ImageComponent(props) {
     const clickImageAtList = () => {
         props.wapper.hidden = false;
         props.element.hidden = false;
-        props.element.src = props.src;
+        props.element.src = props.src.original;
         props.changeImageViewHeight(100);
     };
 
@@ -232,14 +232,16 @@ function ImageComponent(props) {
 
     return (
         <div className="relative
-                        border
                         h-32
                         md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
-                        hover:bg-gray-100 hover:border-pink-500">
+                        ">
             {
-                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src} onClick={(event) => clickCheckBox(event)}></input> : ""
+                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src.original} onClick={(event) => clickCheckBox(event)}></input> : ""
             }
-            <img className="h-full w-full md:rounded-lg border border-0 object-cover" src={props.src} onClick={(event) => clickImageAtList(event)} alt=""></img>
+            <img className="h-full w-full 
+                            rounded-lg md:rounded-lg 
+                            border border-1 hover:border-pink-500
+                            object-cover" src={props.src.compress} onClick={(event) => clickImageAtList(event)} alt=""></img>
         </div>
     )
 }
