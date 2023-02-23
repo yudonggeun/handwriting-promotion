@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{html,js,jsx,ts,tsx}", './node_modules/tw-elements/dist/js/**/*.js'],
+  content: ["./src/**/*.{html,js,jsx,ts,tsx}",],
   theme: {
     screens: {
       'sm': '640px',
@@ -28,7 +28,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('tw-elements/dist/plugin'),
-    require('tailwind-scrollbar-hide')
+    require('tailwind-scrollbar-hide'),
   ]
 }
