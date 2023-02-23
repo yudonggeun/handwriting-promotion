@@ -65,6 +65,12 @@ function Intro(props) {
         amend_file = file;
     };
 
+    const callModal = (id) => {
+        const modal = document.getElementById(id);
+        modal.classList.remove("hidden");
+    }
+
+
     return (
         <div className="relative h-1/2 md:h-1/4 md:flex mb-5">
             <div className="p-5 h-4/6 md:h-full md:flex-1 flex justify-center">
@@ -86,7 +92,10 @@ function Intro(props) {
                 <div className="absolute w-30 h-30 right-0 bottom-0 opacity-30 hover:opacity-100">
                     <input id="imageChangeInput" name="file" type="file" className="hidden" onChange={(event) => preview(event)}></input>
                     <label htmlFor="imageChangeInput" className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 px-1 py-1.5">이미지 사진 변경</label>
-                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}Modal`}>수정하기</button>
+                    <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 p-1"
+                        data-bs-toggle="modal"
+                        onClick={() => callModal(`${props.id}Modal`)}
+                        >수정하기</button>
                     <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" onClick={() => requestLogout()}>로그아웃</button>
                 </div>
                 : ""}

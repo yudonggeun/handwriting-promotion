@@ -78,6 +78,11 @@ function Content(props) {
         };
     }
 
+    const callModal = (id) => {
+        const modal = document.getElementById(id);
+        modal.classList.remove("hidden");
+    }
+
     const deleteContent = props.deleteContent;
 
     return (
@@ -105,8 +110,8 @@ function Content(props) {
                 : <div className="p-5 text-md w-full outline-none resize-none text-gray-800" ref={descriptionRef}>{info.description}</div>
             }
             <div className="flex justify-end">
-                {isAmend ? <button className="bg-gray-400 hover:bg-gray-700 text-white rounded-lg ml-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}DeleteModal`}>삭제하기</button> : ""}
-                {isAmend ? <button className="bg-red-400 hover:bg-red-600 text-white rounded-lg ml-5 my-3 p-1" data-bs-toggle="modal" data-bs-target={`#${props.id}ModifyModal`}>수정하기</button> : ""}
+                {isAmend ? <button className="bg-gray-400 hover:bg-gray-700 text-white rounded-lg ml-5 my-3 p-1" onClick={() => callModal(`${props.id}DeleteModal`)}>삭제하기</button> : ""}
+                {isAmend ? <button className="bg-red-400 hover:bg-red-600 text-white rounded-lg ml-5 my-3 p-1" onClick={() => callModal(`${props.id}ModifyModal`)}>수정하기</button> : ""}
                 <button className="text-pink-300 hover:text-pink-900 rounded-lg mx-5 my-3 p-1" onClick={() => {
                     const obj = getObj();
                     changeView(obj, "detail");
