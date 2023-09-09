@@ -1,11 +1,13 @@
 import React, { useContext, useRef } from "react";
 import GoogleLogin from "../component/oauth/googleOauth";
 import KakaoLogin from "../component/oauth/kakaoOauth";
-import API from "../config/urlConfig";
 import AmendContext from "../context/amend_status_context";
 import PageContext from "../context/page_context";
 
 function LoginPage(props) {
+
+    const host = process.env.REACT_APP_HOSTNAME
+    const loginUrl = host + "/api/admin/login"
 
     const changeView = useContext(PageContext);
     const loginFailMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.";
@@ -31,7 +33,7 @@ function LoginPage(props) {
         const id = inputId.current.value;
         const pw = inputPassword.current.value;
 
-        fetch(API.LOGIN, {
+        fetch(loginUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,13 +53,14 @@ function LoginPage(props) {
             )
             .then((response) => {
                 if (response.status === "success") {
-                    if (response.data.amendAuthority) {
+                    if (response.data.role === "ADMIN") {
                         loginSuccess();
                     } else {
                         loginFail();
                     }
                 } else {
-                    alert(`POST ${API.LOGIN} : 로그인이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`POST : 로그인이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    console.log(response)
                 }
             })
             .catch((error) => {

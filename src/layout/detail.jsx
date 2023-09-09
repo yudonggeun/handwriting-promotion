@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { useContext } from "react";
-import API from "../config/urlConfig";
 import AmendContext from "../context/amend_status_context";
 import DetailInfoContext from "../context/detail_info_context";
 import LoadingContext from "../context/loading_context";
@@ -11,12 +10,16 @@ import PageContext from "../context/page_context";
 
 function DetailWrapper(props) {
 
+    const contentImageUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content/image"
+    const imageChangeUrl = process.env.REACT_APP_HOSTNAME + "/api/data/detail"
+
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
     const [isAmend, setAmend] = useContext(AmendContext);
     const setLoading = useContext(LoadingContext);
 
-    const [imgList, setImageList] = useState(contentInfo.images);
+    console.log("content 정보 : ", contentInfo)
+    const [imgList, setImageList] = useState(contentInfo.images.content);
 
     const imageView = useRef();
     const imageWapper = useRef();
@@ -28,7 +31,7 @@ function DetailWrapper(props) {
         //init
         const image_viewer = imageView.current;
         image_viewer.src = ``;
-        setImageList(contentInfo.images);
+        setImageList(contentInfo.images.content);
     })
 
     const changeImageViewHeight = (heightRate) => {
@@ -42,25 +45,24 @@ function DetailWrapper(props) {
     }
 
     const changeImageList = (array) => {
-        contentInfo.images = array;
+        contentInfo.images.content = array;
         setImageList([]);
     }
 
     const requestImageSrouces = async (id) => {
         setLoading(true);
-        return await fetch(API.CONTENT_IMAGE + "?content_id=" + id)
+        return await fetch(contentImageUrl + "?content_id=" + id)
             .then((response) => response.json())
-            .then((data) => {
-                if (data.status === "success") {
-                    return data.data;
+            .then((response) => {
+                if (response.status === "success") {
+                    return response.data;
                 } else {
-                    alert(`GET ${API.CONTENT_IMAGE} : 홍보 이미지 목록 조회가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`GET : 홍보 이미지 목록 조회가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
                 setLoading(false);
             })
             .catch((e) => {
-                console.log(e);
-                alert("오류 발생");
+                alert("이미지 조회 실패");
                 setLoading(false);
             });
     }
@@ -69,7 +71,7 @@ function DetailWrapper(props) {
         const formData = new FormData(document.getElementById("detail_form"));
 
         setLoading(true);
-        fetch(`${API.IMAGE_CHANGE}/${contentInfo.id}`, {
+        fetch(`${imageChangeUrl}/${contentInfo.id}`, {
             method: 'PUT',
             headers: {
                 Authorization: localStorage.getItem("access-token")
@@ -79,10 +81,11 @@ function DetailWrapper(props) {
             .then((response) => response.json())
             .then(async (data) => {
                 if (data.status === "success") {
-                    const newImgList = await requestImageSrouces(contentInfo.id);
+                    const imageData = await requestImageSrouces(contentInfo.id);
+                    const newImgList = imageData.content
                     changeImageList(newImgList);
                 } else {
-                    alert(`PUT ${API.IMAGE_CHANGE}/${contentInfo.id} : 이미지 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`PUT : 이미지 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
                 setLoading(false);
             })
@@ -93,25 +96,27 @@ function DetailWrapper(props) {
     }
 
     const requestDeleteImage = () => {
-
+        console.log(contentInfo)
         setLoading(true);
-        fetch(`${API.IMAGE_CHANGE}/${contentInfo.id}`, {
+        fetch(`${imageChangeUrl}`, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("access-token"),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                files: Array.from(deleteImageSet)
+                imageIds: Array.from(deleteImageSet),
+                contentId: contentInfo.id 
             })
         })
             .then((response) => response.json())
             .then(async (data) => {
                 if (data.status === "success") {
-                    const newImgList = await requestImageSrouces(contentInfo.id);
+                    const imageData = await requestImageSrouces(contentInfo.id);
+                    const newImgList = imageData.content
                     changeImageList(newImgList);
                 } else {
-                    alert(`DELETE ${API.IMAGE_CHANGE}/${contentInfo.id} : 이미지 삭제가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`DELETE: 이미지 삭제가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
                 setLoading(false);
             })
@@ -167,7 +172,7 @@ function DetailWrapper(props) {
                         imgList ?
                             imgList.map((src, index) => {
                                 return (
-                                    <ImageComponent key={src} src={src}
+                                    <ImageComponent key={index} src={src}
                                         wapper={imageWapper.current}
                                         element={imageView.current}
                                         deleteImageSet={deleteImageSet}
@@ -212,22 +217,20 @@ function ImageComponent(props) {
 
     const deleteImageSet = props.deleteImageSet;
     const [isAmend, setAmend] = useContext(AmendContext);
+    const imageInfo = props.src;
 
     const clickImageAtList = () => {
         props.wapper.hidden = false;
         props.element.hidden = false;
-        props.element.src = props.src.original;
+        props.element.src = imageInfo.original;
         props.changeImageViewHeight(100);
     };
 
     const clickCheckBox = (event) => {
         const checkbox = event.target;
-        if (checkbox.checked) {
-            deleteImageSet.add(checkbox.value);
-        } else {
-            deleteImageSet.delete(checkbox.value);
-        }
-        console.log(deleteImageSet);
+        const imageId = checkbox.value;
+        if (checkbox.checked) { deleteImageSet.add(imageId); }
+        else { deleteImageSet.delete(imageId); }
     }
 
     return (
@@ -236,12 +239,12 @@ function ImageComponent(props) {
                         md:h-1/4 md:p-2 md:rounded-lg md:shadow md:bg-gray-50
                         ">
             {
-                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={props.src.original} onClick={(event) => clickCheckBox(event)}></input> : ""
+                isAmend ? <input className="absolute top-0 right-0 m-3" type="checkbox" value={imageInfo.id} onClick={(event) => clickCheckBox(event)}></input> : ""
             }
             <img className="h-full w-full 
                             rounded-lg md:rounded-lg 
                             border border-1 hover:border-pink-500
-                            object-cover" src={props.src.compress} onClick={(event) => clickImageAtList(event)} alt=""></img>
+                            object-cover" src={imageInfo.compress} onClick={(event) => clickImageAtList(event)} alt=""></img>
         </div>
     )
 }

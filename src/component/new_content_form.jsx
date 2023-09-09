@@ -1,6 +1,5 @@
 import { useContext, useRef } from "react";
 import { useState } from "react";
-import API from "../config/urlConfig";
 import LoadingContext from "../context/loading_context";
 import ImageUtil from "../util/image_util"
 
@@ -8,6 +7,8 @@ import ImageUtil from "../util/image_util"
 
 function ContentForm(props) {
 
+    const contentChangeUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content"
+    
     const [update, setUpdate] = useState(1);
     const [images, setImages] = useState([]);
 
@@ -62,7 +63,7 @@ function ContentForm(props) {
         })], { type: "application/json" }));
 
         changeLoading(true);
-        fetch(API.CONTENT_CHANGE, {
+        fetch(contentChangeUrl, {
             method: 'PUT',
             headers: {
                 Authorization: localStorage.getItem("access-token")
@@ -74,7 +75,7 @@ function ContentForm(props) {
                 if (response.status === "success") {
                     createSuccessProcessFuntion(response.data);
                 } else {
-                    alert(`PUT ${API.CONTENT_CHANGE} : 홍보글 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`PUT : 홍보글 등록이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
                 changeLoading(false);
             })

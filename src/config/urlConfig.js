@@ -1,22 +1,16 @@
-
-const host = `http://localhost:3000`; //local enviroment
-// const host = `http://localhost/api`; //test enviroment at docker
-// const host = `http://www.beautifulwriting.site/api`; //operation enviroment
-
 const API = {
-    HOST: host,
-    contentInfosURL: `${host}/data/content`,
-    amendURL: `${host}/admin/isAmend`,
-    introInfosURL: `${host}/data/intro`,
+    // HOST: ,
+    // contentInfosURL: `${}/api/data/content`,
+    // introInfosURL: `${}/api/data/intro`,
 
-    INTRO_CHANGE: `${host}/data/intro`,
-    CONTENT_CHANGE: `${host}/data/content`,
+    // INTRO_CHANGE: `${}/api/data/intro`,
+    // CONTENT_CHANGE: `${}/api/data/content`,
 
-    IMAGE_CHANGE: `${host}/data/detail`,
-    CONTENT_IMAGE: `${host}/data/content/image`,
+    // IMAGE_CHANGE: `${}/api/data/detail`,
+    // CONTENT_IMAGE: `${}/api/data/content/image`,
 
-    LOGIN: `${host}/admin/login`,
-    KAKAO_OAUTH: `${host}/oauth2/authorization/kakao`,
+    // LOGIN: `${}/api/admin/login`,
+    // KAKAO_OAUTH: `${}/api/oauth2/authorization/kakao`,
 }
 
 export default API;

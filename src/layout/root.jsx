@@ -5,11 +5,14 @@ import DetailInfoContext from "../context/detail_info_context";
 import PageContext from "../context/page_context";
 import LoginPage from "./login";
 import MainLayout from "./main";
-import API from "../config/urlConfig"
 import LoadingContext from "../context/loading_context";
 import Loading from "./loading";
 
 function RootLayout() {
+
+    const contentUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content"
+    const contentImageUrl =process.env.REACT_APP_HOSTNAME +  "/api/data/content/image"
+    const introUrl =process.env.REACT_APP_HOSTNAME +  "/api/data/intro"
 
     const [pageInfo, setPageInfo] = useState({ page: "main", id: null });
     const [introInfo, setIntroInfo] = useState(null);
@@ -63,36 +66,14 @@ function RootLayout() {
         }
     }
 
-    const requestAmend = () => {
-        fetch(API.amendURL, {
-            headers: {
-                Authorization: localStorage.getItem("access-token")
-            }
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status === "success") {
-                    if (data.data.status === true) {
-                        setAmend(data.data.amendAuthority);
-                    }
-                } else {
-                    alert(`GET ${API.amendURL} : 요청 실패! 관리자에게 문의하세요.`);
-                }
-
-            }).catch((e) => {
-                console.log(e);
-                setAmend(false);
-            });
-    }
-
     const requestImageSrouces = async (id) => {
-        return await fetch(API.CONTENT_IMAGE + "?content_id=" + id)
+        return await fetch(contentImageUrl + "?content_id=" + id)
             .then((response) => response.json())
             .then((response) => {
                 if (response.status === "success") {
                     return response.data;
                 } else {
-                    alert(`GET ${API.CONTENT_IMAGE} : 홍보 이미지 목록 조회가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`GET : 홍보 이미지 목록 조회가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
             })
             .catch((e) => {
@@ -102,13 +83,13 @@ function RootLayout() {
     }
 
     const requestContentInfos = () => {
-        fetch(API.contentInfosURL)
+        fetch(contentUrl)
             .then((response) => response.json())
             .then((response) => {
                 if (response.status === "success") {
-                    setContentInfos(response.data);
+                    setContentInfos(response.data.content);
                 } else {
-                    alert(`GET ${API.contentInfosURL} : 요청 실패! 관리자에게 문의하세요.`);
+                    alert(`GET: 요청 실패! 관리자에게 문의하세요.`);
                 }
             }).catch((e) => {
                 console.log(e);
@@ -117,13 +98,13 @@ function RootLayout() {
     }
 
     const requestIntroInfos = () => {
-        fetch(API.introInfosURL)
+        fetch(introUrl)
             .then((response) => response.json())
             .then((response) => {
                 if (response.status === "success") {
                     setIntroInfo(response.data);
                 } else {
-                    alert(`GET ${API.introInfosURL} : 요청 실패! 관리자에게 문의하세요.`);
+                    alert(`GET : 요청 실패! 관리자에게 문의하세요.`);
                 }
             })
             .catch((e) => {
@@ -134,7 +115,6 @@ function RootLayout() {
 
     useEffect(() => {
         requestContentInfos();
-        requestAmend();
         requestIntroInfos();
     }, []);
 

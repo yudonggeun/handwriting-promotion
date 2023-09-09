@@ -1,12 +1,13 @@
 import React, { useContext } from "react";
 import AmendContext from "../context/amend_status_context";
 import Modal from "./modal";
-import API from "../config/urlConfig"
 
 function Intro(props) {
 
+    const mainPageChangeUrl = process.env.REACT_APP_HOSTNAME + "/api/data/intro"
     const info = props.info;
     let amend_file;
+    console.log("info : " ,info)
 
     const [isAmend, setAmend] = useContext(AmendContext);
 
@@ -16,7 +17,7 @@ function Intro(props) {
         formData.append("file", amend_file);
         formData.append("dto", new Blob([JSON.stringify(info)], { type: "application/json" }));
 
-        fetch(API.INTRO_CHANGE, {
+        fetch(mainPageChangeUrl, {
             method: 'POST',
             headers: {
                 Authorization: localStorage.getItem("access-token")
@@ -26,7 +27,7 @@ function Intro(props) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status !== "success") {
-                    alert(`POST ${API.INTRO_CHANGE} : 인트로 수정이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`수정이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
             })
             .catch((error) => {
@@ -41,9 +42,8 @@ function Intro(props) {
 
     const changeInfoComment = (event) => {
         const obj = event.target;
-        const comments = info.comments;
-        const index = obj.dataset.index;
-        comments[index] = obj.value;
+        console.log("object: ", obj.value)
+        info.description = obj.value;
     }
 
     const readURL = file => {
@@ -60,7 +60,7 @@ function Intro(props) {
         const url = await readURL(file);
         const img = document.getElementById("introImage");
 
-        info.image = file.name;
+        info.imageUrl = file.name;
         img.src = url;
         amend_file = file;
     };
@@ -74,18 +74,13 @@ function Intro(props) {
     return (
         <div className="relative h-1/2 md:h-1/4 md:flex mb-5">
             <div className="p-5 h-4/6 md:h-full md:flex-1 flex justify-center">
-                <img id="introImage" src={info.image} alt="" className="h-full"></img>
+                <img id="introImage" src={info.imageUrl} alt="" className="h-full"></img>
             </div>
 
             <div className=" md:h-full md:w-2/5 p-5">
                 {
-                    info.comments.map((comment, index) => {
-                        return (
-                            isAmend
-                                ? <textarea name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" onChange={(event) => changeInfoComment(event)} data-index={index} readOnly={!isAmend} key={index} defaultValue={comment}></textarea>
-                                : <div name="comments" className="mb-1 w-full bg-transparent outline-none resize-none text-sm lg:text-base font-medium text-gray-900" data-index={index} key={index} >{comment}</div>
-                        )
-                    })
+                    isAmend ? <textarea name="comments" className="mb-1 w-full bg-transparent outline-none resize-none" onChange={(event) => changeInfoComment(event)} readOnly={!isAmend} defaultValue={info.description}></textarea>
+                        : <div name="comments" className="mb-1 w-full bg-transparent outline-none resize-none text-sm lg:text-base font-medium text-gray-900">{info.description}</div>
                 }
             </div>
             {isAmend ?
@@ -95,7 +90,7 @@ function Intro(props) {
                     <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg ml-2 my-3 p-1"
                         data-bs-toggle="modal"
                         onClick={() => callModal(`${props.id}Modal`)}
-                        >수정하기</button>
+                    >수정하기</button>
                     <button className="bg-red-500 hover:bg-red-600 text-white rounded-lg mx-2 my-3 p-1" onClick={() => requestLogout()}>로그아웃</button>
                 </div>
                 : ""}
