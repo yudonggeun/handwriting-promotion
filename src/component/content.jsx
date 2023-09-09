@@ -3,9 +3,10 @@ import { useRef } from "react";
 import AmendContext from "../context/amend_status_context";
 import PageContext from "../context/page_context";
 import Modal from "./modal";
-import API from "../config/urlConfig"
 
 function Content(props) {
+
+    const changeContentUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content"
 
     const [info, setInfo] = useState(props.info);
     const [isAmend, setAmend] = useContext(AmendContext);
@@ -18,7 +19,7 @@ function Content(props) {
     const descriptionRef = useRef();
 
     const requestAmendContent = () => {
-        fetch(API.CONTENT_CHANGE, {
+        fetch(changeContentUrl, {
             method: 'POST',
             headers: {
                 Authorization: localStorage.getItem("access-token"),
@@ -34,7 +35,7 @@ function Content(props) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status !== "success") {
-                    alert(`POST ${API.CONTENT_CHANGE} : 홍보 컨텐츠 수정이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`홍보 컨텐츠 수정이 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
             })
             .catch((error) => {
@@ -43,16 +44,14 @@ function Content(props) {
     }
 
     const requestDeleteContent = () => {
-        fetch(API.CONTENT_CHANGE, {
+        fetch(changeContentUrl, {
             method: 'DELETE',
             headers: {
                 Authorization: localStorage.getItem("access-token"),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                id: id,
-                title: titleRef.current.value,
-                description: descriptionRef.current.value
+                contentId: id,
             }),
         })
             .then((response) => response.json())
@@ -60,7 +59,7 @@ function Content(props) {
                 if (data.status === "success") {
                     deleteContent(id);
                 } else {
-                    alert(`DELETE ${API.CONTENT_CHANGE} : 홍보 컨텐츠 삭제가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
+                    alert(`홍보 컨텐츠 삭제가 실패했습니다. 다시 실행해보시고 관리자에게 문의하세요.`);
                 }
 
             })

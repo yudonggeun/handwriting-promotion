@@ -92,7 +92,8 @@ function MainLayout(props) {
                             <div className="w-full 
                                             3xl:grid 3xl:grid-cols-2 3xl:gap-5
                                             4xl:grid-cols-3">
-                                {contentInfos?.map((obj, index) => {
+                                                {console.log(contentInfos)}
+                                {contentInfos.map((obj, index) => {
                                     return (<Content info={obj} index={index} key={obj.id} id={`content${index}`} deleteContent={deleteContent} />)
                                 })}
                             </div>
