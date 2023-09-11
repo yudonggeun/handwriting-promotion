@@ -18,7 +18,6 @@
   "scripts": {
     "start": "cross-env NODE_PATH=local react-scripts start",
     "build": "cross-env NODE_PATH=deploy react-scripts build",
-    "docker": "cross-env NODE_PATH=docker react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

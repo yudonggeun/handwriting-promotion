@@ -10,15 +10,14 @@ import PageContext from "../context/page_context";
 
 function DetailWrapper(props) {
 
-    const contentImageUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content/image"
-    const imageChangeUrl = process.env.REACT_APP_HOSTNAME + "/api/data/detail"
+    const contentImageUrl = "/api/data/content/image"
+    const imageChangeUrl = "/api/data/detail"
 
     const contentInfo = useContext(DetailInfoContext);
     const changeView = useContext(PageContext);
     const [isAmend, setAmend] = useContext(AmendContext);
     const setLoading = useContext(LoadingContext);
 
-    console.log("content 정보 : ", contentInfo)
     const [imgList, setImageList] = useState(contentInfo.images.content);
 
     const imageView = useRef();

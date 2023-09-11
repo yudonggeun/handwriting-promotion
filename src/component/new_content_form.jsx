@@ -7,7 +7,7 @@ import ImageUtil from "../util/image_util"
 
 function ContentForm(props) {
 
-    const contentChangeUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content"
+    const contentChangeUrl = "/api/data/content"
     
     const [update, setUpdate] = useState(1);
     const [images, setImages] = useState([]);

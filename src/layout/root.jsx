@@ -10,9 +10,9 @@ import Loading from "./loading";
 
 function RootLayout() {
 
-    const contentUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content"
-    const contentImageUrl =process.env.REACT_APP_HOSTNAME +  "/api/data/content/image"
-    const introUrl =process.env.REACT_APP_HOSTNAME +  "/api/data/intro"
+    const contentUrl = "/api/data/content"
+    const contentImageUrl = "/api/data/content/image"
+    const introUrl = "/api/data/intro"
 
     const [pageInfo, setPageInfo] = useState({ page: "main", id: null });
     const [introInfo, setIntroInfo] = useState(null);

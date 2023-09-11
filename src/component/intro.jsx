@@ -4,7 +4,7 @@ import Modal from "./modal";
 
 function Intro(props) {
 
-    const mainPageChangeUrl = process.env.REACT_APP_HOSTNAME + "/api/data/intro"
+    const mainPageChangeUrl = "/api/data/intro"
     const info = props.info;
     let amend_file;
     console.log("info : " ,info)

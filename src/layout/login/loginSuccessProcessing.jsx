@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import API from "../../config/urlConfig";
 import Loading from "../loading";
 
 function LoginSuccessProcess(){
 
     const login = () => {
-        fetch(`${API.LOGIN}`)
+        fetch("/api/admin/login")
         .then((response) => {
             const token = response.headers.get("authorization");
             if (token) {

@@ -6,7 +6,7 @@ import Modal from "./modal";
 
 function Content(props) {
 
-    const changeContentUrl = process.env.REACT_APP_HOSTNAME + "/api/data/content"
+    const changeContentUrl = "/api/data/content"
 
     const [info, setInfo] = useState(props.info);
     const [isAmend, setAmend] = useContext(AmendContext);

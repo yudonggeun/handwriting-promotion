@@ -6,8 +6,7 @@ import PageContext from "../context/page_context";
 
 function LoginPage(props) {
 
-    const host = process.env.REACT_APP_HOSTNAME
-    const loginUrl = host + "/api/admin/login"
+    const loginUrl = "/api/admin/login"
 
     const changeView = useContext(PageContext);
     const loginFailMessage = "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.";
